@@ -30,7 +30,10 @@ class WordManager(models.Manager):
         return WordQuerySet(self.model, using=self._db)
 
     def save(self, word): # TODO is this method really needed?
-        word.save() 
+        word.save()
+        for translation in word._translations:
+            translation.translated.save()
+            translation.save()
 
     def get_by_id(self, word_id):
         try:
@@ -41,8 +44,11 @@ class WordManager(models.Manager):
     def get_all(self):
         return self.get_queryset().with_translations().all()
 
-    def find_by_word(self, word):
-        return self.get_queryset().filter(word__contains=word).with_translations()
+    def find_with_word(self, word):
+        return self.get_queryset().filter(word__icontains=word).with_translations()
+
+    def find_word(self, word, language):
+        return self.get_queryset().filter(word__iexact=word, language=language).with_translations()
 
     def get_all_by_id(self, word_ids):
         return self.get_queryset().filter(id__in=word_ids).with_translations()
