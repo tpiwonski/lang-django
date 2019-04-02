@@ -1,55 +1,53 @@
 from rest_framework.views import APIView, Response
 
-from dictionary.controllers.word import GetAllWords, AddWord, FindWord, AddTranslation, WordInput, AddTranslationInput
+from dictionary.controllers.entry import GetAllEntries, AddEntry, FindEntry, AddTranslation, EntryInput, AddTranslationInput
 
 
-class WordsView(APIView):
-    get_all_words_controller = GetAllWords()
-    add_word_controller = AddWord()
+class EntriesView(APIView):
+    get_all_entries_controller = GetAllEntries()
+    add_entry_controller = AddEntry()
 
     def get(self, request):
-        words = self.get_all_words_controller.execute()
+        entries = self.get_all_entries_controller.execute()
 
-        # data = WordsResponse(words).data
         return Response(data={
             'data': {
                 'results': [
-                    {'word': word} for word in words
+                    {'entry': entry} for entry in entries
                 ]
             }
         })
 
     def post(self, request):
-        serializer = WordInput(data=request.data)
+        serializer = EntryInput(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        word = serializer.validated_data['word']
+        text = serializer.validated_data['text']
         language = serializer.validated_data['language']
 
-        word = self.add_word_controller.execute(word=word, language=language)
+        entry = self.add_entry_controller.execute(text=text, language=language)
 
-        # data = WordResultResponse(word).data
         return Response(data={
             'data': {
-                'word': word
+                'entry': entry
             }
         })
 
 
-class WordView(APIView):
-    find_word_controller = FindWord()
+# class EntryView(APIView):
+#     find_entry_controller = FindEntry()
 
-    def get(self, request, word):
-        words = self.find_word_controller.execute(word=word)
+#     def get(self, request, text):
+#         entries = self.find_entry_controller.execute(text=text)
         
-        # data = WordsResponse(words).data
-        return Response(data={
-            'data': {
-                'results': [
-                    {'word': word} for word in words
-                ]
-            }
-        })
+#         # data = WordsResponse(words).data
+#         return Response(data={
+#             'data': {
+#                 'results': [
+#                     {'entry': entry} for entry in entries
+#                 ]
+#             }
+#         })
 
 
 # class TranslationAPIView(APIView):
@@ -88,21 +86,21 @@ class WordView(APIView):
 #     word_id = UUIDField()
 
 
-class AddTranslationView(APIView):
+class TranslationsView(APIView):
     add_translation_controller = AddTranslation()
 
     def post(self, request):
         serializer = AddTranslationInput(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        word = serializer.validated_data['word']
+        entry = serializer.validated_data['entry']
         translations = serializer.validated_data['translations']
 
-        result = self.add_translation_controller.execute(word, translations)
+        result = self.add_translation_controller.execute(entry, translations)
 
         # data = WordResultResponse(result).data
         return Response(data={
             'data': {
-                'word': result
+                'entry': result
             }
         })
