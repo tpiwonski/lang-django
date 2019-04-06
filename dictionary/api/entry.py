@@ -1,6 +1,6 @@
 from rest_framework.views import APIView, Response
 
-from dictionary.controllers.entry import GetAllEntries, AddEntry, FindEntry, AddTranslation, EntryInput, AddTranslationInput
+from dictionary.controllers.entry import GetAllEntries, AddEntry, FindEntry, AddTranslation, EntryInput, AddTranslationInput, GetEntry
 
 
 class EntriesView(APIView):
@@ -34,20 +34,32 @@ class EntriesView(APIView):
         })
 
 
-# class EntryView(APIView):
-#     find_entry_controller = FindEntry()
+class EntryView(APIView):
+    get_entry_controller = GetEntry()
 
-#     def get(self, request, text):
-#         entries = self.find_entry_controller.execute(text=text)
+    def get(self, request, guid):
+        entry = self.get_entry_controller.execute(guid)
+        return Response(data={
+            'data': {
+                'entry': entry
+            }
+        })
+
+
+class SearchEntryView(APIView):
+    find_entry_controller = FindEntry()
+
+    def get(self, request, text):
+        entries = self.find_entry_controller.execute(text=text)
         
-#         # data = WordsResponse(words).data
-#         return Response(data={
-#             'data': {
-#                 'results': [
-#                     {'entry': entry} for entry in entries
-#                 ]
-#             }
-#         })
+        # data = WordsResponse(words).data
+        return Response(data={
+            'data': {
+                'results': [
+                    {'entry': entry} for entry in entries
+                ]
+            }
+        })
 
 
 # class TranslationAPIView(APIView):

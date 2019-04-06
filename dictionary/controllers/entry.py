@@ -50,6 +50,14 @@ class AddEntry(object):
         return EntryOutput(entry).data
 
 
+class GetEntry(object):
+    entry_repository = Entry.objects
+
+    def execute(self, guid):
+        entry = self.entry_repository.get_by_id(guid)
+        return EntryOutput(entry).data
+
+
 class GetAllEntries(object):
     entry_repository = Entry.objects
 
@@ -61,8 +69,8 @@ class GetAllEntries(object):
 class FindEntry(object):
     entry_repository = Entry.objects
 
-    def execute(self, text):
-        entries = self.entry_repository.find_word(text)
+    def execute(self, text, language=None):
+        entries = self.entry_repository.find(text, language)
         return [EntryOutput(entry).data for entry in entries]
 
 
@@ -70,14 +78,14 @@ class AddTranslation(object):
     entry_repository = Entry.objects
 
     def execute(self, entry, translations):
-        source_entry = self.entry_repository.find_word(entry['text'], entry['language'])
+        source_entry = self.entry_repository.find(entry['text'], entry['language'])
         if source_entry:
             source_entry = source_entry[0]
         else:
             source_entry = Entry.create(entry['text'], entry['language'])
 
         for translation in translations:
-            translated_entry = self.entry_repository.find_word(translation['text'], translation['language'])
+            translated_entry = self.entry_repository.find(translation['text'], translation['language'])
             if translated_entry:
                 translated_entry = translated_entry[0]
             else:

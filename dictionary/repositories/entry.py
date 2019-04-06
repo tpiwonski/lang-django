@@ -52,11 +52,12 @@ class EntryManager(models.Manager):
     def get_all(self):
         return self.get_queryset().with_translations().all()
 
-    # def find_with_word(self, word):
-    #     return self.get_queryset().filter(word__icontains=word).with_translations()
-
-    def find_word(self, word, language):
-        return self.get_queryset().filter(text__iexact=word, language=language).with_translations()
+    def find(self, text, language=None):
+        qs = self.get_queryset().filter(text__icontains=text)
+        if language:
+            qs = qs.filter(language=language)
+            
+        return qs.with_translations()
 
     # def get_all_by_id(self, word_ids):
     #     return self.get_queryset().filter(id__in=word_ids).with_translations()
