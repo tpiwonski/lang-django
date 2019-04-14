@@ -1,0 +1,5 @@
+psql -U postgres -h localhost
+create database lang_master;
+grant all privileges on database lang_master to lang;
+drop database lang_clean;
+create database lang_repetitions with template lang_master owner lang;
