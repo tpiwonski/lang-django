@@ -84,7 +84,7 @@ DATABASES = {
     # }
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'lang_master',
+        'NAME': 'lang_repetitions',
         'USER': 'lang',
         'PASSWORD': 'test123',
         'HOST': 'localhost',
