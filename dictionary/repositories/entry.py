@@ -50,13 +50,13 @@ class EntryManager(models.Manager):
             return None
 
     def get_all(self):
-        return self.get_queryset().with_translations().all()
+        return self.get_queryset().with_translations().order_by('text').all()
 
     def find(self, text, language=None):
-        qs = self.get_queryset().filter(text__icontains=text)
+        qs = self.get_queryset().filter(text__icontains=text).order_by('text')
         if language:
             qs = qs.filter(language=language)
-            
+
         return qs.with_translations()
 
     # def get_all_by_id(self, word_ids):
