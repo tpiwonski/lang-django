@@ -2,7 +2,7 @@ import uuid
 
 from django.db import models
 
-from dictionary.repositories.entry import EntryManager, EntryData, LANGUAGES
+from dictionary.db.entry import EntryManager, EntryData, LANGUAGES
 from dictionary.models.translation import Translation
 
 

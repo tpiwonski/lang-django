@@ -1,16 +1,12 @@
 import uuid
 
-from django.db import models
+from dictionary.db.translation import TranslationData
 
 
-class Translation(models.Model):
-    id = models.UUIDField(primary_key=True)
-    source = models.ForeignKey('dictionary.Entry', on_delete=models.CASCADE, related_name='source')
-    translated = models.ForeignKey('dictionary.Entry', on_delete=models.CASCADE, related_name='translated')
+class Translation(TranslationData):
 
     class Meta:
-        db_table = 'dictionary_translation'
-        unique_together = (('source', 'translated'),)
+        proxy = True
 
     @staticmethod
     def create(source, translated):
