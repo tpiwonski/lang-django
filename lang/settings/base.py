@@ -39,7 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'corsheaders',
-    'dictionary'
+    'dictionary',
+    'learning'
 ]
 
 MIDDLEWARE = [
@@ -84,7 +85,7 @@ DATABASES = {
     # }
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'lang_master',
+        'NAME': 'lang_learning',
         'USER': 'lang',
         'PASSWORD': 'test123',
         'HOST': 'localhost',
