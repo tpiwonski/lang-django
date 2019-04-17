@@ -3,6 +3,7 @@ import uuid
 from django.db import models
 from django.db.models.expressions import Q
 
+
 LANGUAGE_PL = 'pl'
 LANGUAGE_EN = 'en'
 
@@ -71,6 +72,8 @@ class EntryData(models.Model):
     id = models.UUIDField(primary_key=True)
     text = models.CharField(max_length=255)
     language = models.CharField(max_length=2, choices=LANGUAGES)
+    created_at = models.DateTimeField(auto_now_add=True) 
+    updated_at = models.DateTimeField(auto_now=True)
 
     objects = EntryManager()
 

@@ -2,8 +2,8 @@ import uuid
 
 from django.db import models
 
-from dictionary.db.entry import EntryManager, EntryData, LANGUAGES
-from dictionary.models.translation import Translation
+from lang.dictionary.db.entry import EntryManager, EntryData, LANGUAGES
+from lang.dictionary.models.translation import Translation
 
 
 class Entry(EntryData):

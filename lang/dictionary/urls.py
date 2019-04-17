@@ -1,6 +1,6 @@
 from django.urls import path, re_path
 
-from dictionary.api.entry import EntriesView, TranslationsView, SearchEntryView, EntryView
+from lang.dictionary.api.entry import EntriesView, TranslationsView, SearchEntryView, EntryView
 
 
 urlpatterns = [

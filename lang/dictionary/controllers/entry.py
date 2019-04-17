@@ -2,7 +2,7 @@ import uuid
 
 from rest_framework.serializers import Serializer, CharField, ChoiceField, UUIDField, ModelSerializer, SerializerMethodField
 
-from dictionary.models import Entry, LANGUAGES, Translation
+from lang.dictionary.models import Entry, LANGUAGES, Translation
 
 
 class EntryInput(Serializer):

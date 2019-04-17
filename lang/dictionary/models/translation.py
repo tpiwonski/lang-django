@@ -1,6 +1,6 @@
 import uuid
 
-from dictionary.db.translation import TranslationData
+from lang.dictionary.db.translation import TranslationData
 
 
 class Translation(TranslationData):
