@@ -58,7 +58,11 @@ ROOT_URLCONF = 'langsite.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [
+            'lang/templates',
+            'lang/dictionary/templates',
+            'lang/repetitions/templates'
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

@@ -1,0 +1,7 @@
+{% extends "lang/base.html" %}
+{% block body %}
+<span>Entries</span>
+{% for entry in entries %}
+    {% include "dictionary/fragments/entry.html" %}
+{% endfor %}
+{% endblock body %}

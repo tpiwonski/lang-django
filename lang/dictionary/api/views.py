@@ -1,6 +1,7 @@
 from rest_framework.views import APIView, Response
 
-from lang.dictionary.controllers.entry import GetAllEntries, AddEntry, FindEntry, AddTranslation, EntryInput, AddTranslationInput, GetEntry
+from lang.dictionary.serializers import EntryInput, AddTranslationInput
+from lang.dictionary.controllers import GetAllEntries, AddEntry, FindEntry, AddTranslation, GetEntry
 
 
 class EntriesView(APIView):
