@@ -2,7 +2,7 @@
     <div>{{ entry.text }}</div>
     <ul>
     {% for translation in entry.translations %}
-        <li>{{ translation.text }}</li>
+        <li><a href={% url 'view-entry' translation.id %}>{{ translation.text }}</a></li>
     {% endfor %}
     </ul>
 </div>

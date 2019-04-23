@@ -16,8 +16,8 @@ class AddEntry(object):
 class GetEntry(object):
     entry_repository = Entry.objects
 
-    def execute(self, guid):
-        entry = self.entry_repository.get_by_id(guid)
+    def execute(self, entry_id):
+        entry = self.entry_repository.get_by_id(entry_id)
         return EntryOutput(entry).data
 
 

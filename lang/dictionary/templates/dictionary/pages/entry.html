@@ -1,0 +1,5 @@
+{% extends "dictionary/base.html" %}
+{% block body %}
+{{ block.super }}
+{% include "dictionary/fragments/entry.html" with entry=entry %}
+{% endblock body %}

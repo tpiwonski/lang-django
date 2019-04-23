@@ -38,8 +38,8 @@ class EntriesView(APIView):
 class EntryView(APIView):
     get_entry_controller = GetEntry()
 
-    def get(self, request, guid):
-        entry = self.get_entry_controller.execute(guid)
+    def get(self, request, entry_id):
+        entry = self.get_entry_controller.execute(entry_id)
         return Response(data={
             'data': {
                 'entry': entry
