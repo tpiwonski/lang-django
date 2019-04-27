@@ -1,7 +1,7 @@
 from django.views.generic import TemplateView
 
 
-class ContextMixin(object):
+class ComponentContext(object):
     context_classes = []
 
     def get_context(self, request, *args, **kwargs):
@@ -12,7 +12,7 @@ class ContextMixin(object):
         return context
 
 
-class ComponentView(ContextMixin, TemplateView):
+class ComponentView(ComponentContext, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

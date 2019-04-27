@@ -3,7 +3,7 @@ from django.views.generic.base import View
 from django.views.generic.base import TemplateResponseMixin
 from django.shortcuts import redirect
 
-from lang.common.component import ContextMixin
+from lang.common.component import ComponentContext, ComponentView
 from lang.dictionary.controllers import AddTranslation
 from lang.dictionary.views.current_date import CurrentDateContext
 
@@ -13,15 +13,15 @@ class AddTranslationForm(forms.Form):
     translations = forms.CharField()
 
 
-class AddTranslationView(ContextMixin, TemplateResponseMixin, View):
+class AddTranslationView(ComponentView):
     template_name = 'dictionary/pages/add_translation.html'
     add_translation_controller = AddTranslation()
     context_classes = [CurrentDateContext]
 
-    def get(self, request, *args, **kwargs):
-        context = self.get_context(request, *args, **kwargs)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
         context['form'] = AddTranslationForm()
-        return self.render_to_response(context)
+        return context
 
     def post(self, request, *args, **kwargs):
         form = AddTranslationForm(request.POST)
