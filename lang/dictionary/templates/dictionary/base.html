@@ -1,4 +1,8 @@
 {% extends "lang/pages/base.html" %}
 {% block body %}
-<div><a href={% url 'entry-list' %}>Home</a></div>
+<ul>
+    <li><a href={% url 'entry-list' %}>Entries</a></li>
+    <li><a href={% url 'add-translation' %}>Add translation</a></li>
+</ul>
+{% include "dictionary/fragments/current_date.html" %}
 {% endblock body %}

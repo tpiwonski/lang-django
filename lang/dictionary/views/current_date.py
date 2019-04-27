@@ -1,15 +1,16 @@
 from django.utils import timezone
 
-from lang.component import ComponentContext, ComponentView
+from lang.common.component import ComponentView
 
 
-class CurrentDateContext(ComponentContext):
+class CurrentDateContext(object):
 
-    def get_context(self, request, **kwargs):
-        context = super(CurrentDateContext, self).get_context(request, **kwargs)
-        context['current_date'] = timezone.now()
-        return context
+    def get_context(self, request, *args, **kwargs):
+        return {
+            'current_date': timezone.now()
+        }
 
 
-class CurrentDateView(CurrentDateContext, ComponentView):
+class CurrentDateView(ComponentView):
     template_name = 'dictionary/fragments/current_date.html'
+    context_classes = [CurrentDateContext]
