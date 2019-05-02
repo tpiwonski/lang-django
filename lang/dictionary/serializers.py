@@ -8,14 +8,14 @@ class EntryInput(Serializer):
     language = ChoiceField(choices=LANGUAGES)
 
 
-class TranslatedEntryOutput(ModelSerializer):
+class TranslationOutput(ModelSerializer):
     class Meta:
         model = Entry
         fields = ['id', 'text', 'language']
 
 
 class EntryOutput(ModelSerializer):
-    translations = TranslatedEntryOutput(many=True)
+    translations = TranslationOutput(many=True)
 
     class Meta:
         model = Entry
@@ -32,7 +32,7 @@ class AddTranslationInput(Serializer):
     translations = TranslationInput(many=True)
 
 
-class AddTranslationOutput(ModelSerializer):
+class AddEntryOutput(ModelSerializer):
     
     class Meta:
         model = Entry

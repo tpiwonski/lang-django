@@ -15,13 +15,18 @@ class Entry(EntryData):
     def create(text, language):
         return Entry(id=uuid.uuid4(), text=text, language=language)
 
-    def add_translation(self, translated_entry):
-        if self.has_translation(translated_entry):
+    def add_translation(self, entry):
+        if self.has_translation(entry):
             return
 
-        translation = Translation.create(source=self, translated=translated_entry)
-        self._add_translation(translation)
+        super().add_translation(entry)
 
-    def has_translation(self, translated_entry):
+        # translation = Translation.create(source=self, translated=entry)
+        # super().add_translation(translation)
+
+    # def remove_translation(self, entry):
+    #     self._remove_translations.append(entry)
+
+    def has_translation(self, entry):
         return any([t for t in self.translations 
-                    if t.text == translated_entry.text and t.language == translated_entry.language])
+                    if t.text == entry.text and t.language == entry.language])

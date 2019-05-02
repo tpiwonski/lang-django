@@ -1,8 +1,29 @@
 {% extends "lang/pages/base.html" %}
 {% block body %}
-<ul>
-    <li><a href={% url 'entry-list' %}>Entries</a></li>
-    <li><a href={% url 'add-translation' %}>Add translation</a></li>
-</ul>
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+ <a class="navbar-brand" href="#">Navbar</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item">
+        <a class="nav-link" href={% url 'entry-list' %}>All entries</span></a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href={% url 'add-entry' %}>Add entry</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href={% url 'translate-entry' %}>Translate entry</a>
+      </li>
+    </ul>
+  </div>
+  </nav>
+{% comment %} <ul>
+    <li><a href={% url 'entry-list' %}>All entries</a></li>
+    <li><a href={% url 'add-entry' %}>Add entry</a></li>
+</ul> {% endcomment %}
 {% include "dictionary/fragments/current_date.html" %}
 {% endblock body %}

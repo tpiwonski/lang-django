@@ -1,0 +1,5 @@
+{% load widget_tweaks %}
+<form class="needs-validation" novalidate action={% url 'translate-entry' %} method="post">
+    {% include 'lang/fragments/form.html' with form=entry_form %}
+    <input type="submit" value="Translate entry">
+</form>

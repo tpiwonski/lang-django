@@ -1,10 +1,14 @@
 from django.urls import path, include, re_path
 
-from lang.dictionary.views import current_date, entry_list, entry_view, add_translation
+from lang.dictionary.views import current_date, entry_list, entry_view, add_entry, edit_entry, translate_entry
 
 urlpatterns = [
     re_path(r'entries/(?P<entry_id>[^/]+)/$', entry_view.EntryView.as_view(), name='entry-view'),
-    re_path(r'entries/$', entry_list.EntryListView.as_view(), name='entry-list'),
+    re_path(r'entries/(?P<entry_id>[^/]+)/edit$', entry_view.EntryView.as_view(), name='entry-view'),
+    re_path(r'all-entries/$', entry_list.EntryListView.as_view(), name='entry-list'),
+    re_path(r'add-entry/$', add_entry.AddEntryView.as_view(), name='add-entry'),
+    re_path(r'edit-entry/(?P<entry_id>[^/]+)/$', edit_entry.EditEntryView.as_view(), name='edit-entry'),
+    re_path(r'translate-entry/$', translate_entry.TranslateEntryView.as_view(), name='translate-entry'),
     re_path(r'current-date/$', current_date.CurrentDateView.as_view(), name='current-date'),
-    path('add-translation/', add_translation.AddTranslationView.as_view(), name='add-translation'),
+    # path('add-translation/add-form', add_translation.AddTranslationForm.as_view(), name='add-translation-form'),
 ]

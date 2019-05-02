@@ -1,9 +1,9 @@
 from django.utils import timezone
 
-from lang.common.component import ComponentView
+from lang.common.component import ComponentView, ComponentContext
 
 
-class CurrentDateContext(object):
+class CurrentDateContext(ComponentContext):
 
     def get_context(self, request, *args, **kwargs):
         return {

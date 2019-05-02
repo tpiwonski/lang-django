@@ -1,5 +1,5 @@
 <div>
-    <div>{{ entry.text }}</div>
+    <div><a href={% url 'entry-view' entry.id %}>{{ entry.text }}</a></div>
     <ul>
     {% for translation in entry.translations %}
         <li><a href={% url 'entry-view' translation.id %}>{{ translation.text }}</a></li>

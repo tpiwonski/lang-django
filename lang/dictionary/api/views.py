@@ -1,7 +1,7 @@
 from rest_framework.views import APIView, Response
 
 from lang.dictionary.serializers import EntryInput, AddTranslationInput
-from lang.dictionary.controllers import GetAllEntries, AddEntry, FindEntry, AddTranslation, GetEntry
+from lang.dictionary.controllers import GetAllEntries, AddEntry, FindEntry, GetEntry
 
 
 class EntriesView(APIView):
@@ -100,7 +100,7 @@ class SearchEntryView(APIView):
 
 
 class TranslationsView(APIView):
-    add_translation_controller = AddTranslation()
+    add_translation_controller = AddEntry()
 
     def post(self, request):
         serializer = AddTranslationInput(data=request.data)

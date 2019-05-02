@@ -1,9 +1,10 @@
-from lang.common.component import ComponentView
+from lang.common.component import ComponentView, ComponentContext
 from lang.dictionary.controllers import GetAllEntries
-from lang.dictionary.views.current_date import CurrentDateContext
+from lang.dictionary.views.base import BaseContext
 
 
-class EntryListContext(object):
+class EntryListContext(ComponentContext):
+    context_classes = [BaseContext]
     get_all_entries_controller = GetAllEntries()
 
     def get_context(self, request, **kwargs):
@@ -15,4 +16,4 @@ class EntryListContext(object):
 
 class EntryListView(ComponentView):
     template_name = 'dictionary/pages/entry_list.html'
-    context_classes = [EntryListContext, CurrentDateContext]
+    context_classes = [EntryListContext]

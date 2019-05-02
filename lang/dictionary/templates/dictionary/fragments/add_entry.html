@@ -1,0 +1,31 @@
+{% load widget_tweaks %}
+<form class="needs-validation" novalidate action={% url 'add-entry' %} method="post">
+    {% include 'lang/fragments/form.html' with form=entry_form %}
+    {{ translation_forms.management_form }}
+    <div id="translation-form-set">
+        {% for translation_form in translation_forms %}
+            {% comment %} {{ translation_form.errors }} {% endcomment %}
+            {% comment %} {% for field in translation_form %}
+                {% include 'lang/fragments/form_field.html' with field=field %}
+            {% endfor %} {% endcomment %}
+            {% include 'lang/fragments/form.html' with form=translation_form %}
+        {% endfor %}
+    </div>
+    <input type="button" value="Add translation" id="add-translation-form">
+    <input type="submit" value="Add entry">
+</form>
+<div id="empty-translation-form" style="display:none">
+    <div class="form-group">
+        {% comment %} {% for field in translation_forms.empty_form %}
+            {% include 'lang/fragments/form_field.html' with field=field %}
+        {% endfor %} {% endcomment %}
+        {% include 'lang/fragments/form.html' with form=translation_forms.empty_form %}
+    </div>
+</div>
+<script type="text/javascript">
+    $('#add-translation-form').click(function() {
+        var form_idx = $('#id_form-TOTAL_FORMS').val();
+        $('#translation-form-set').append($('#empty-translation-form').html().replace(/__prefix__/g, form_idx));
+        $('#id_form-TOTAL_FORMS').val(parseInt(form_idx) + 1);
+    });
+</script>
