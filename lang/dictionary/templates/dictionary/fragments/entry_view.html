@@ -1,8 +1,11 @@
 <div>
-    <div><a href={% url 'entry-view' entry.id %}>{{ entry.text }}</a></div>
+    <div>
+        <a href="{% url 'entry-view' entry.id %}">{{ entry.text }}</a>
+        <a href="{% url 'edit-entry' entry.id %}"><i class="fas fa-edit"></i></a>
+    </div>
     <ul>
     {% for translation in entry.translations %}
-        <li><a href={% url 'entry-view' translation.id %}>{{ translation.text }}</a></li>
+        <li><a href="{% url 'entry-view' translation.id %}">{{ translation.text }}</a></li>
     {% endfor %}
     </ul>
 </div>

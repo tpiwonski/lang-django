@@ -8,6 +8,10 @@ class TranslationService(object):
 
     def translate(self, text: str):
         result = self.client.translate(text)
+        if not result:
+            return []
+
+        entry_language, translation_language = result['dictionary']
         entries = []
         for entry in result['entries']:
             translations = []
@@ -15,12 +19,12 @@ class TranslationService(object):
                 for translation in meaning['translations']:
                     translations.append({
                         'text': translation['text'],
-                        'language': 'pl'
+                        'language': translation_language
                     })
             
             entries.append({
                 'text': entry['text'],
-                'language': 'en',
+                'language': entry_language,
                 'translations': translations
             })
 

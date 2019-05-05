@@ -29,11 +29,11 @@ class GetAllEntries(object):
         return [EntryOutput(entry).data for entry in entries]
 
 
-class FindEntry(object):
+class SearchEntries(object):
     entry_repository = Entry.objects
 
-    def execute(self, text, language=None):
-        entries = self.entry_repository.find(text, language)
+    def execute(self, text):
+        entries = self.entry_repository.search_with_text(text)
         return [EntryOutput(entry).data for entry in entries]
 
 
@@ -41,17 +41,13 @@ class AddEntry(object):
     entry_repository = Entry.objects
 
     def execute(self, entry_data, translations_data):
-        entry = self.entry_repository.find(entry_data['text'], entry_data['language'])
-        if entry:
-            entry = entry[0]
-        else:
+        entry = self.entry_repository.get_by_text(entry_data['text'], entry_data['language'])
+        if not entry:
             entry = Entry.create(entry_data['text'], entry_data['language'])
 
         for translation_data in translations_data:
-            translation = self.entry_repository.find(translation_data['text'], translation_data['language'])
-            if translation:
-                translation = translation[0]
-            else:
+            translation = self.entry_repository.get_by_text(translation_data['text'], translation_data['language'])
+            if not translation:
                 translation = Entry.create(translation_data['text'], translation_data['language'])
 
             if not entry.has_translation(translation):
@@ -67,6 +63,7 @@ class EditEntry(object):
     def execute(self, entry_data, translations_data):
         entry = self.entry_repository.get_by_id(entry_data['id'])
         entry.text = entry_data['text']
+        entry.language = entry_data['language']
 
         for translation in entry.translations:
             if translation.id not in [t['id'] for t in translations_data]:
@@ -74,10 +71,8 @@ class EditEntry(object):
 
         for translation_data in translations_data:
             if not translation_data['id']:
-                translation = self.entry_repository.find(translation_data['text'], translation_data['language'])
-                if translation:
-                    translation = translation[0]
-                else:
+                translation = self.entry_repository.get_by_text(translation_data['text'], translation_data['language'])
+                if not translation:
                     translation = Entry.create(translation_data['text'], translation_data['language'])
 
                 if not entry.has_translation(translation):
@@ -86,6 +81,7 @@ class EditEntry(object):
             else:
                 translation = self.entry_repository.get_by_id(translation_data['id'])
                 translation.text = translation_data['text']
+                translation.language = translation_data['language']
 
                 if not entry.has_translation(translation):
                     entry.add_translation(translation)
@@ -98,23 +94,23 @@ class TranslateEntry(object):
     entry_repository = Entry.objects
     translation_service = TranslationService()
 
-    def execute(self, entry_data):
-        results = self.translation_service.translate(entry_data['text'])
+    def execute(self, text):
+        results = self.translation_service.translate(text)
+        entries = []
         for entry_data in results:
-            entry = self.entry_repository.find(entry_data['text'], entry_data['language'])
-            if entry:
-                entry = entry[0]
-            else:
+            entry = self.entry_repository.get_by_text(entry_data['text'], entry_data['language'])
+            if not entry:
                 entry = Entry.create(entry_data['text'], entry_data['language'])
 
             for translation_data in entry_data['translations']:
-                translation = self.entry_repository.find(translation_data['text'], translation_data['language'])
-                if translation:
-                    translation = translation[0]
-                else:
+                translation = self.entry_repository.get_by_text(translation_data['text'], translation_data['language'])
+                if not translation:
                     translation = Entry.create(translation_data['text'], translation_data['language'])
 
                 if not entry.has_translation(translation):
                     entry.add_translation(translation)
         
             self.entry_repository.save(entry)
+            entries.append(entry)
+
+        return [EntryOutput(entry).data for entry in entries]

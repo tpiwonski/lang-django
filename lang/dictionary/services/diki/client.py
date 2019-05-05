@@ -31,18 +31,34 @@ class HtmlClient(object):
 
 
 class HtmlParser(object):
-    
-    def __init__(self):
-        pass
+    DICTIONARY_EN_PL = 'angielsko-polski'
+    DICTIONARY_PL_EN = 'polsko-angielski'
+    ENTRY_NOT_FOUND = 'Nie znaleziono'
 
     def parse_results(self, content):
-        content = BeautifulSoup(content)
+        content = BeautifulSoup(content, features="html.parser")
+
+        first_paragraph_tag = content.select('#contentWrapper .dikiBackgroundBannerPlaceholder p')
+        if first_paragraph_tag:
+            first_paragraph = first_paragraph_tag[0].text.strip()
+            if self.ENTRY_NOT_FOUND in first_paragraph:
+                return None
+
+        dictionary_tag = content.select('.dictionarySectionHeader .hide-below-xs')
+        dictionary_name = dictionary_tag[0].text.strip()
+        if self.DICTIONARY_EN_PL in dictionary_name:
+            dictionary_name = ('en', 'pl')
+        elif self.DICTIONARY_PL_EN in dictionary_name:
+            dictionary_name = ('pl', 'en')
+        else:
+            raise NotImplementedError()
+
         left_column_tag = content.select('.diki-results-left-column')
         entries = []
         if left_column_tag:
             entries = self.parse_entries(left_column_tag[0])
         
-        return dict(entries=entries)
+        return dict(dictionary=dictionary_name, entries=entries)
 
     def parse_entries(self, content):
         entity_tags = content.find_all('div', class_='dictionaryEntity')
@@ -83,6 +99,9 @@ class HtmlParser(object):
 
     def parse_part_of_speech(self, content):
         part_of_speech_tag = content.find_previous_sibling('div', class_='partOfSpeechSectionHeader')
+        if not part_of_speech_tag:
+            return None
+
         part_of_speech = part_of_speech_tag.text.strip()
         return part_of_speech
 

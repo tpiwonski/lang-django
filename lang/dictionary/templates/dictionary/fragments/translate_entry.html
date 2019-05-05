@@ -1,5 +1,18 @@
 {% load widget_tweaks %}
-<form class="needs-validation" novalidate action={% url 'translate-entry' %} method="post">
-    {% include 'lang/fragments/form.html' with form=entry_form %}
-    <input type="submit" value="Translate entry">
+<div id="translate-entry">
+<form class="needs-validation" novalidate ic-post-to="{% url 'translate-entry' %}" ic-target="#translate-entry" ic-replace-target="true" ic-indicator="#indicator" method="post">
+    <div class="form-row">
+        {% include 'lang/fragments/form.html' with form=translate_form %}
+        {% include 'lang/fragments/form_field.html' with field=translate_form.text field_class="col" %}
+    </div>
+    <input type="submit" value="Translate">
+    <div id="indicator" class="spinner-border spinner-border-sm" role="status" style="display:none">
+        <span class="sr-only">Loading...</span>
+    </div>
 </form>
+<div id="entries-list" ic-dep="*" ic-action="remove" ic-target="this">
+{% if entries %}
+    {% include 'dictionary/fragments/entry_list.html' with entries=entries %}
+{% endif %}
+</div>
+</div>

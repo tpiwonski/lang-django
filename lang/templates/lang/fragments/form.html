@@ -13,6 +13,8 @@
     </div>
 {% endif %}
 
-{% for field in form.visible_fields %}
+{% comment %} {% for field in form.visible_fields %}
     {% include 'lang/fragments/form_field.html' with field=field %}
-{% endfor %}
+{% endfor %} {% endcomment %}
+
+{% comment %} {% include 'lang/fragments/form_field.html' with field= %} {% endcomment %}

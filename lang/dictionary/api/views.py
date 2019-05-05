@@ -1,7 +1,7 @@
 from rest_framework.views import APIView, Response
 
 from lang.dictionary.serializers import EntryInput, AddTranslationInput
-from lang.dictionary.controllers import GetAllEntries, AddEntry, FindEntry, GetEntry
+from lang.dictionary.controllers import GetAllEntries, AddEntry, SearchEntries, GetEntry
 
 
 class EntriesView(APIView):
@@ -48,7 +48,7 @@ class EntryView(APIView):
 
 
 class SearchEntryView(APIView):
-    find_entry_controller = FindEntry()
+    find_entry_controller = SearchEntries()
 
     def get(self, request, text):
         entries = self.find_entry_controller.execute(text=text)

@@ -34,8 +34,16 @@ class TranslationFormSet(forms.BaseFormSet):
             if not form.cleaned_data.get('text'):
                 form.add_error('text', u'Field cannot be empty')
 
+    def get_translations_data(self):
+        translations_data = []
+        for form in self.forms:
+            if form not in self.deleted_forms:
+                translations_data.append(form.cleaned_data)
+        
+        return translations_data
 
-TranslationFormSet = forms.formset_factory(TranslationForm, formset=TranslationFormSet)
+
+TranslationFormSet = forms.formset_factory(TranslationForm, formset=TranslationFormSet, can_delete=True, extra=0)
 
 
 class AddEntryView(ComponentView):
@@ -65,7 +73,7 @@ class AddEntryView(ComponentView):
             return self.render_to_response(context)
         
         entry = self.add_entry_controller.execute(
-            entry_form.cleaned_data, translation_forms.cleaned_data
+            entry_form.cleaned_data, translation_forms.get_translations_data()
         )
         
         return redirect('entry-view', entry_id=entry['id'])

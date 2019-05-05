@@ -1,11 +1,9 @@
 from django import forms
-from django.views.generic.base import View
-from django.views.generic.base import TemplateResponseMixin
 from django.shortcuts import redirect
 
-from lang.dictionary.db.entry import LANGUAGES
-from lang.common.component import ComponentContext, ComponentView
+from lang.common.component import ComponentView
 from lang.dictionary.controllers import GetEntry, EditEntry
+from lang.dictionary.db.entry import LANGUAGES
 from lang.dictionary.views.base import BaseContext
 
 
@@ -27,6 +25,14 @@ class TranslationFormSet(forms.BaseFormSet):
         for form in self.forms:
             if not form.cleaned_data.get('text'):
                 form.add_error('text', u'Field cannot be empty')
+
+    def get_translations_data(self):
+        translations_data = []
+        for form in self.forms:
+            if form not in self.deleted_forms:
+                translations_data.append(form.cleaned_data)
+        
+        return translations_data
 
 
 TranslationFormSet = forms.formset_factory(TranslationForm, formset=TranslationFormSet, extra=0, can_delete=True)
@@ -64,6 +70,8 @@ class EditEntryView(ComponentView):
             })
             return self.render_to_response(context)
 
-        self.edit_entry_controller.execute(entry_form.cleaned_data, translation_forms.cleaned_data)
+        self.edit_entry_controller.execute(
+            entry_form.cleaned_data, translation_forms.get_translations_data()
+        )
 
         return redirect('entry-view', entry_id=entry['id'])
