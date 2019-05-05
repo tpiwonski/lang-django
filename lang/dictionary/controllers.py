@@ -2,7 +2,7 @@ import uuid
 
 from lang.dictionary.models import Entry
 from lang.dictionary.serializers import EntryOutput, AddEntryOutput
-from lang.dictionary.services.diki.service import TranslationService
+from lang.dictionary.integrations.diki.service import TranslationService
 
 # class AddEntry(object):
 #     entry_repository = Entry.objects
