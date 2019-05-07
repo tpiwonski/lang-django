@@ -1,0 +1,6 @@
+{% extends "dictionary/base.html" %}
+{% block body %}
+{{ block.super }}
+{% include "dictionary/fragments/entry_view.html" with entry=entry %}
+{% comment %} <a href="{% url 'edit-entry' entry_id=entry.id %}">Edit</a> {% endcomment %}
+{% endblock body %}

@@ -1,0 +1,30 @@
+{% load widget_tweaks %}
+<div class="form-group row {{ field_class }}">
+    {% comment %} {{ field.label_tag }} {% endcomment %}
+
+    {% comment %} <label for="{{ field.id_for_label }}" class="col-sm-4 col-form-label">{{ field.label }}</label> {% endcomment %}
+
+    {% comment %} {% if form.is_bound %} {% endcomment %}
+    <div class="col">
+    {% if field.errors %}
+        {% comment %} <div class="col-sm-8"> {% endcomment %}
+            {% render_field field class="form-control is-invalid" %}
+        {% comment %} </div> {% endcomment %}
+        {% for error in field.errors %}
+        <div class="invalid-feedback">
+            {{ error }}
+        </div>
+        {% endfor %}
+    {% else %}
+        {% render_field field class="form-control is-valid" %}
+    {% endif %}
+
+    {% comment %} {% else %}
+        {% render_field field class="form-control" %}
+    {% endif %} {% endcomment %}
+
+    {% if field.help_text %}
+        <small class="form-text text-muted">{{ field.help_text }}</small>
+    {% endif %}
+    </div>
+</div>
