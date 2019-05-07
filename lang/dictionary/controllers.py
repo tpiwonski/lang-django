@@ -101,6 +101,7 @@ class TranslateEntry(object):
             entry = self.entry_repository.get_by_text(entry_data['text'], entry_data['language'])
             if not entry:
                 entry = Entry.create(entry_data['text'], entry_data['language'])
+                entry.add_recordings(entry_data['recordings'])
 
             for translation_data in entry_data['translations']:
                 translation = self.entry_repository.get_by_text(translation_data['text'], translation_data['language'])
@@ -114,3 +115,10 @@ class TranslateEntry(object):
             entries.append(entry)
 
         return [EntryOutput(entry).data for entry in entries]
+
+
+class DeleteEntry(object):
+    entry_repository = Entry.objects
+
+    def execute(self, entry_id):
+        self.entry_repository.delete(entry_id)

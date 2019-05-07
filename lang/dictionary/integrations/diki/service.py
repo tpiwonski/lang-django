@@ -19,13 +19,15 @@ class TranslationService(object):
                 for translation in meaning['translations']:
                     translations.append({
                         'text': translation['text'],
-                        'language': translation_language
+                        'language': translation_language,
+                        'recordings': meaning['recordings']
                     })
             
             entries.append({
                 'text': entry['text'],
                 'language': entry_language,
-                'translations': translations
+                'translations': translations,
+                'recordings': entry['recordings']
             })
 
         return entries

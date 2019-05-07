@@ -72,8 +72,9 @@ class HtmlParser(object):
         entry_tag = content.select('.hws .hw') #find('div', clss_='hws').find('span', class_='hw')
         text = entry_tag[0].text.strip()
         meanings = self.parse_meanings(content)
-        return dict(text=text, meanings=meanings)
-    
+        recordings = self.parse_recordings(content, css='.hws .hw+')
+        return dict(text=text, meanings=meanings, recordings=recordings)
+
     def parse_meanings(self, content):
         meanings = []
         
@@ -95,7 +96,9 @@ class HtmlParser(object):
 
     def parse_entry_slice(self, content, part_of_speech):
         translations = self.parse_translations(content)
-        return dict(part_of_speech=part_of_speech, translations=translations)
+        recordings = self.parse_recordings(content, css='.hw + ')
+        examples = self.parse_examples(content)
+        return dict(part_of_speech=part_of_speech, translations=translations, recordings=recordings)
 
     def parse_part_of_speech(self, content):
         part_of_speech_tag = content.find_previous_sibling('div', class_='partOfSpeechSectionHeader')
@@ -107,7 +110,9 @@ class HtmlParser(object):
 
     def parse_meaning(self, content, part_of_speech):
         translations = self.parse_translations(content)
-        return dict(part_of_speech=part_of_speech, translations=translations)
+        recordings = self.parse_recordings(content, css='.hw + ')
+        examples = self.parse_examples(content)
+        return dict(part_of_speech=part_of_speech, translations=translations, recordings=recordings)
 
     def parse_translations(self, content):
         translation_tags = content.find_all('span', class_='hw', recursive=False)
@@ -119,3 +124,35 @@ class HtmlParser(object):
 
     def parse_translation(self, content):
         return dict(text=content.text.strip())
+
+    def parse_recordings(self, content, css=''):
+        recording_tags = content.select('{}.recordingsAndTranscriptions .hasRecording *[data-audio-url]'.format(css))
+        recordings = []
+        for recording_tag in recording_tags:
+            recordings.append({
+                'url': 'https://diki.pl' + recording_tag['data-audio-url']
+            })
+
+        return recordings
+
+    def parse_examples(self, content):
+        example_tags = content.select('.exampleSentence')
+        examples = []
+        for example_tag in example_tags:
+            text = example_tag.next.strip()
+            translation_tags = example_tag.select('.exampleSentenceTranslation')
+            if not translation_tags:
+                continue
+    
+            translation = translation_tags[0].text.strip().strip('()')
+            recordings = self.parse_recordings(example_tag)
+            if not recordings:
+                continue
+
+            examples.append({
+                'text': text,
+                'translation': translation,
+                'recording': recordings[0]
+            })
+
+        return examples

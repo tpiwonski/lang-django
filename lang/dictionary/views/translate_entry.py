@@ -37,7 +37,6 @@ class TranslateEntryView(ComponentView):
                 'translate_form': translate_form
             })
             return render(request, 'dictionary/fragments/translate_entry.html', context)
-            # return self.render_to_response(context)
         
         entries = self.translate_entry_controller.execute(**translate_form.cleaned_data)
 

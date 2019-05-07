@@ -55,9 +55,19 @@ class EntryManager(models.Manager):
         for translation in entry.translations:
             translation.save()
         
+        for recording in entry._add_recordings:
+            recording.save()
+
         for translation in entry._add_translations:
             translation.save()
             Translation.create(source=entry, translated=translation).save()
+
+        entry._add_translations = []
+        entry._add_recordings = []
+        entry._remove_translations = []
+
+    def delete(self, entry_id):
+        self.get_queryset().filter(id=entry_id).delete()
 
     def get_by_id(self, entry_id):
         try:
@@ -81,13 +91,6 @@ class EntryManager(models.Manager):
 
         return qs.order_by('text')
 
-    # def get_all_by_id(self, word_ids):
-    #     return self.get_queryset().filter(id__in=word_ids).with_translations()
-
-    # def get_translations(self, word):
-    #     return [t.source if t.translated == word else t.translation 
-    #             for t in word.source.all().union(word.translated.all())]
-
 
 class EntryData(models.Model):
     id = models.UUIDField(primary_key=True)
@@ -107,6 +110,7 @@ class EntryData(models.Model):
 
         self._add_translations = []
         self._remove_translations = []
+        self._add_recordings = []
 
     @property
     def translations(self):
@@ -117,18 +121,17 @@ class EntryData(models.Model):
     def add_translation(self, entry):
         self._add_translations.append(entry)
 
-    #     from lang.dictionary.models.translation import Translation
-    #     translation = Translation.create(source=self, translated=entry)
-    #     translation.save()
-
-    #     # self._translations.append(translation)
-
     def remove_translation(self, entry):
         self._remove_translations.append(entry)
 
-    #     from lang.dictionary.models.translation import Translation
-    #     Translation.objects.filter(
-    #         Q(source=self, translated=entry) | 
-    #         Q(source=entry, translated=self)).delete()
+    def add_recording(self, recording):
+        self._add_recordings.append(recording)
 
-    #     # self._removed_translations.append(entry)
+
+class EntryRecordingData(models.Model):
+    id = models.UUIDField(primary_key=True)
+    entry = models.ForeignKey('lang.Entry', on_delete=models.CASCADE, related_name='recordings')
+    url = models.CharField(max_length=255)
+
+    class Meta:
+        db_table = 'dictionary_entry_recording'

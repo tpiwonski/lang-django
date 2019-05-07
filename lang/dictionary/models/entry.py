@@ -2,7 +2,7 @@ import uuid
 
 from django.db import models
 
-from lang.dictionary.db.entry import EntryManager, EntryData, LANGUAGES
+from lang.dictionary.db.entry import EntryManager, EntryData, LANGUAGES, EntryRecordingData
 from lang.dictionary.models.translation import Translation
 
 
@@ -21,12 +21,10 @@ class Entry(EntryData):
 
         super().add_translation(entry)
 
-        # translation = Translation.create(source=self, translated=entry)
-        # super().add_translation(translation)
-
-    # def remove_translation(self, entry):
-    #     self._remove_translations.append(entry)
-
     def has_translation(self, entry):
         return any([t for t in self.translations 
                     if t.text == entry.text and t.language == entry.language])
+
+    def add_recordings(self, recordings_data):
+        for recording_data in recordings_data:
+            self.add_recording(EntryRecordingData(id=uuid.uuid4(), entry=self, url=recording_data['url']))
