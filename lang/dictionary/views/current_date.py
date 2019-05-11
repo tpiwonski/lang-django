@@ -12,5 +12,8 @@ class CurrentDateContext(ComponentContext):
 
 
 class CurrentDateView(ComponentView):
-    template_name = 'dictionary/fragments/current_date.html'
+    fragment_template = 'dictionary/fragments/current_date.html'
     context_classes = [CurrentDateContext]
+
+    def get(self, request, *args, **kwargs):
+        return self.render_fragment({}, **kwargs)

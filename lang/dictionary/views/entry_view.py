@@ -17,10 +17,14 @@ class EntryContext(ComponentContext):
 
 
 class EntryView(ComponentView):
-    template_name = 'dictionary/pages/entry_view.html'
+    page_template = 'dictionary/pages/entry_view.html'
+    fragment_template = 'dictionary/fragments/entry_deleted.html'
     context_classes = [EntryContext]
     delete_entry_controller = DeleteEntry()
 
+    def get(self, request, *args, **kwargs):
+        return self.render_page({}, **kwargs)
+
     def delete(self, request, entry_id, *args, **kwargs):
         self.delete_entry_controller.execute(entry_id)
-        return render(request, 'dictionary/fragments/entry_deleted.html')
+        return self.render_fragment({}, **kwargs)

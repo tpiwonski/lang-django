@@ -1,5 +1,5 @@
 from django import forms
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render
 
 from lang.common.component import ComponentView
 from lang.dictionary.controllers import GetEntry, EditEntry
@@ -39,21 +39,19 @@ TranslationFormSet = forms.formset_factory(TranslationForm, formset=TranslationF
 
 
 class EditEntryView(ComponentView):
-    template_name = 'dictionary/pages/edit_entry.html'
+    page_template = 'dictionary/pages/edit_entry.html'
     get_entry_controller = GetEntry()
     edit_entry_controller = EditEntry()
     context_classes = [BaseContext]
 
-    def get_context_data(self, entry_id, **kwargs):
-        context = super().get_context_data(**kwargs)
-
+    def get(self, request, entry_id, *args, **kwargs):
         entry = self.get_entry_controller.execute(entry_id)
-        context.update({
+        context = {
             'entry': entry,
             'entry_form': EntryForm(entry),
             'translation_forms': TranslationFormSet(initial=entry['translations'])
-        })
-        return context
+        }
+        return self.render_page(context, **kwargs)
 
     def post(self, request, entry_id, *args, **kwargs):
         entry = self.get_entry_controller.execute(entry_id)
@@ -62,13 +60,12 @@ class EditEntryView(ComponentView):
         valid_entry = entry_form.is_valid()
         valid_translations = translation_forms.is_valid()
         if not valid_entry or not valid_translations:
-            context = super().get_context_data(**kwargs)
-            context.update({
+            context = {
                 'entry': entry,
                 'entry_form': entry_form,
                 'translation_forms': translation_forms
-            })
-            return self.render_to_response(context)
+            }
+            return self.render_page(context, **kwargs)
 
         self.edit_entry_controller.execute(
             entry_form.cleaned_data, translation_forms.get_translations_data()

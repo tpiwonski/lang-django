@@ -1,9 +1,14 @@
 {% load widget_tweaks %}
-<div id="search-entries">
-    <form class="needs-validation" novalidate ic-post-to="{% url 'search-entries' %}" ic-target="#search-entries" ic-indicator="#indicator" ic-replace-target="true" method="post">
+<div id="search-entries" ic-on-beforeTrigger="onBeforePost(evt, elt)">
+    <form class="needs-validation" novalidate method="post"
+        ic-post-to="{% url 'search-entries' %}" 
+        ic-target="#search-entries" 
+        ic-indicator="#indicator" 
+        ic-replace-target="true"
+    >
         <div class="form-row">
             {% include 'lang/fragments/form.html' with form=search_form %}
-            {% include 'lang/fragments/form_field.html' with field=search_form.text field_class="col" %}
+            {% include 'lang/fragments/form_field.html' with field=search_form.q field_class="col" %}
         </div>
         <input type="submit" value="Search">
         <div id="indicator" class="spinner-border spinner-border-sm" role="status" style="display:none">
@@ -14,3 +19,14 @@
         {% include 'dictionary/fragments/entry_list.html' with entries=entries %}
     {% endif %}
 </div>
+<script>
+function onBeforePost(evt, elt) {
+    var q = elt[0].elements['q'].value;
+    var url = elt[0].attributes['ic-post-to'].value;
+    history.pushState({}, "search " + q, url + "?q=" + q);
+    $('#entry-list').empty();
+}
+window.onpopstate = function(event) {
+  document.location = document.location;
+};
+</script>

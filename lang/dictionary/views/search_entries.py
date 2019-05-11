@@ -8,41 +8,42 @@ from lang.dictionary.views.base import BaseContext
 
 
 class SearchEntriesForm(forms.Form):
-    text = forms.CharField(max_length=255)
-    # language = forms.ChoiceField(choices=LANGUAGES)
-
-    # def __init__(self, *args, **kwargs):
-    #     super().__init__(*args, **kwargs)
-    #     self.initial['language'] = LANGUAGE_EN
+    q = forms.CharField(max_length=255)
 
 
 class SearchEntriesView(ComponentView):
-    template_name = 'dictionary/pages/search_entries.html'
+    page_template = 'dictionary/pages/search_entries.html'
+    fragment_template = 'dictionary/fragments/search_entries.html'
     context_classes = [BaseContext]
     search_entries_controller = SearchEntries()
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context.update({
-            'search_form': SearchEntriesForm()
+    def get(self, request, *args, **kwargs):
+        text = self.request.GET.get('q')
+        search_form = SearchEntriesForm(initial={
+            'q': text
         })
-        return context
+        context = {
+            'search_form': search_form
+        }
+
+        if text:
+            entries = self.search_entries_controller.execute(text)
+            context.update({
+                'entries': entries
+            })
+
+        return self.render_page(context, **kwargs)
 
     def post(self, request, *args, **kwargs):
         search_form = SearchEntriesForm(request.POST)
+        context = {
+            'search_form': search_form
+        }
         if not search_form.is_valid():
-            context = super().get_context_data(**kwargs)
-            context.update({
-                'search_form': search_form
-            })
-            return render(request, 'dictionary/fragments/search_entries.html', context)
-            # return self.render_to_response(context)
+            return self.render_fragment(context, **kwargs)
 
-        entries = self.search_entries_controller.execute(**search_form.cleaned_data)
-        
-        context = super().get_context_data(**kwargs)
+        entries = self.search_entries_controller.execute(text=search_form.cleaned_data['q'])
         context.update({
-            'search_form': search_form,
             'entries': entries
         })
-        return render(request, 'dictionary/fragments/search_entries.html', context)
+        return self.render_fragment(context, **kwargs)

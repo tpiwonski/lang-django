@@ -1,3 +1,5 @@
+from django.shortcuts import redirect, render
+
 from lang.common.component import ComponentView, ComponentContext
 from lang.dictionary.controllers import GetAllEntries
 from lang.dictionary.views.base import BaseContext
@@ -15,5 +17,8 @@ class EntryListContext(ComponentContext):
 
 
 class EntryListView(ComponentView):
-    template_name = 'dictionary/pages/entry_list.html'
+    page_template = 'dictionary/pages/entry_list.html'
     context_classes = [EntryListContext]
+
+    def get(self, request, *args, **kwargs):
+        return self.render_page({}, **kwargs)

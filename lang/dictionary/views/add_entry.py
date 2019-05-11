@@ -1,7 +1,7 @@
 from django import forms
 from django.views.generic.base import View
 from django.views.generic.base import TemplateResponseMixin
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render
 
 from lang.dictionary.db.entry import LANGUAGES, LANGUAGE_EN, LANGUAGE_PL
 from lang.common.component import ComponentContext, ComponentView
@@ -47,17 +47,16 @@ TranslationFormSet = forms.formset_factory(TranslationForm, formset=TranslationF
 
 
 class AddEntryView(ComponentView):
-    template_name = 'dictionary/pages/add_entry.html'
+    page_template = 'dictionary/pages/add_entry.html'
     add_entry_controller = AddEntry()
     context_classes = [BaseContext]
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context.update({
+    def get(self, request, *args, **kwargs):
+        context = {
             'entry_form': EntryForm(),
             'translation_forms': TranslationFormSet()
-        })
-        return context
+        }
+        return self.render_page(context, **kwargs)
 
     def post(self, request, *args, **kwargs):
         entry_form = EntryForm(request.POST)
@@ -65,12 +64,11 @@ class AddEntryView(ComponentView):
         valid_entry = entry_form.is_valid()
         valid_translations = translation_forms.is_valid()
         if not valid_entry or not valid_translations:
-            context = super().get_context_data(**kwargs)
-            context.update({
+            context = {
                 'entry_form': entry_form,
                 'translation_forms': translation_forms
-            })
-            return self.render_to_response(context)
+            }
+            return self.render_page(context, **kwargs)
         
         entry = self.add_entry_controller.execute(
             entry_form.cleaned_data, translation_forms.get_translations_data()
