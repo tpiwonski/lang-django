@@ -1,0 +1,25 @@
+<div>
+<form class="needs-validation" novalidate action="{% url 'delete-entries' %}" method="post">
+{% for entry in entries %}
+    <div>
+        <div>
+            <input type="checkbox" name="entry_{{ entry.id }}" value="{{ entry.id }}">
+            <a href="{% url 'entry-view' entry.id %}">{{ entry.text }}</a>
+            <a href="{% url 'edit-entry' entry.id %}"><i class="fas fa-edit"></i></a>
+            {% for recording in entry.recordings %}
+                <a href="{{ recording.url }}" target="_blank"><i class="fas fa-volume-up"></i></a>
+            {% endfor %} 
+        </div>
+        <ul>
+        {% for translation in entry.translations %}
+            <li>
+                <input type="checkbox" name="translation_{{ translation.id }}" value="{{ translation.id }}">
+                <a href="{% url 'entry-view' translation.id %}">{{ translation.text }}</a>
+            </li>
+        {% endfor %}
+        </ul>
+    </div>
+{% endfor %}
+    <input type="submit" class="btn btn-primary col-sm-3" value="Delete">
+</form>
+</div>

@@ -1,7 +1,9 @@
 {% load widget_tweaks %}
 <form id="entry-form" class="needs-validation" novalidate action="{{ entry_form_action }}" method="post">
+    {% csrf_token %}
+    {% include 'lang/fragments/form_hidden_fields.html' with form=entry_form %}
+    {% include 'lang/fragments/form_errors.html' with form=entry_form %}
     <div class="form-row">
-        {% include 'lang/fragments/form.html' with form=entry_form %}
         {% include 'lang/fragments/form_field.html' with field=entry_form.text field_class="col-sm-8" %}
         {% include 'lang/fragments/form_field.html' with field=entry_form.language field_class="col-sm-3" %}
     </div>
@@ -14,42 +16,46 @@
             {% else %}
                 <div class="form-row">
             {% endif %}
-                    {% include 'lang/fragments/form.html' with form=translation_form %}
+                    {% csrf_token %}
+                    {% include 'lang/fragments/form_hidden_fields.html' with form=translation_form %}
+                    {% include 'lang/fragments/form_errors.html' with form=translation_form %}
                     {% include 'lang/fragments/form_field.html' with field=translation_form.text field_class="col-sm-8" %}
                     {% include 'lang/fragments/form_field.html' with field=translation_form.language field_class="col-sm-3" %}
                     {% include 'lang/fragments/form_field.html' with field=translation_form.DELETE field_class="col-sm-1" %}
-                    <script>
+                    {% comment %} <script>
                         $('#{{ translation_form.DELETE.id_for_label }}').click(function() {
                             $(this).closest('.form-row').hide();
                         });
-                    </script>
+                    </script> {% endcomment %}
                 </div>
         {% endfor %}
     </div>
     <div class="form-group row">
-    <input type="button" class="btn btn-light col-sm-3" value="Add translation" id="entry-form-add-translation">
-    </div>
-    <div class="form-group row">
-    <input type="submit" class="btn btn-primary col-sm-3" value="Save">
-    {% if entry %}
-        <button type="button" class="btn btn-secondary col-sm-3" 
-                ic-delete-from="{% url 'entry-view' entry.id %}" 
-                ic-confirm="Are you sure?" 
-                ic-target="#entry-form">Delete</button>
-    {% endif %}
+        <input type="button" class="btn btn-light col-sm-3" value="Add translation" id="entry-form-add-translation">
+    {% comment %} </div>
+    <div class="form-group row"> {% endcomment %}
+        <input type="submit" class="btn btn-primary col-sm-3" value="Save entry">
+        {% if entry %}
+            <button type="button" class="btn btn-secondary col-sm-3" 
+                    ic-post-to="{% url 'delete-entry' entry.id %}" 
+                    ic-confirm="Are you sure?" 
+                    ic-target="#entry-form">Delete entry</button>
+        {% endif %}
     </div>
 </form>
 <div id="entry-form-empty-translation" style="display:none">
     <div class="form-row">
-        {% include 'lang/fragments/form.html' with form=translation_forms.empty_form %}
+        {% csrf_token %}
+        {% include 'lang/fragments/form_hidden_fields.html' with form=translation_forms.empty_form %}
+        {% include 'lang/fragments/form_errors.html' with form=translation_forms.empty_form %}
         {% include 'lang/fragments/form_field.html' with field=translation_forms.empty_form.text field_class="col-sm-8" %}
         {% include 'lang/fragments/form_field.html' with field=translation_forms.empty_form.language field_class="col-sm-3" %}
         {% include 'lang/fragments/form_field.html' with field=translation_forms.empty_form.DELETE field_class="col-sm-1" %}
-        <script>
+        {% comment %} <script>
             $('#id_form-__prefix__-DELETE').click(function() {
                 $(this).closest('.form-row').hide();
             });
-        </script>
+        </script> {% endcomment %}
     </div>
 </div>
 <script type="text/javascript">

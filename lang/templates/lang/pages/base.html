@@ -15,9 +15,20 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/intercooler-js/1.2.2/intercooler.js"></script>
 </head>
-<body>
+<body ic-on-success="foo(data, textStatus, xhr)">
     {% block body %}
     
     {% endblock body %}
 </body>
+<script>
+function foo(data, textStatus, xhr) {
+    var payload = JSON.parse(data);
+    for(var key in payload) {
+        var value = payload[key];
+        $(document.getElementById(key)).replaceWith(value);
+        Intercooler.processNodes(document.getElementById(key));
+    }
+    return false;
+}
+</script>
 </html>

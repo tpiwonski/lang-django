@@ -56,7 +56,7 @@ class AddEntryView(ComponentView):
             'entry_form': EntryForm(),
             'translation_forms': TranslationFormSet()
         }
-        return self.render_page(context, **kwargs)
+        return self.render(context, **kwargs)
 
     def post(self, request, *args, **kwargs):
         entry_form = EntryForm(request.POST)
@@ -68,7 +68,7 @@ class AddEntryView(ComponentView):
                 'entry_form': entry_form,
                 'translation_forms': translation_forms
             }
-            return self.render_page(context, **kwargs)
+            return self.render(context, **kwargs)
         
         entry = self.add_entry_controller.execute(
             entry_form.cleaned_data, translation_forms.get_translations_data()

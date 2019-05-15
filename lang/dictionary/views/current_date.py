@@ -12,6 +12,7 @@ class CurrentDateContext(ComponentContext):
 
 
 class CurrentDateView(ComponentView):
+    fragment_id = 'current-date'
     fragment_template = 'dictionary/fragments/current_date.html'
     context_classes = [CurrentDateContext]
 

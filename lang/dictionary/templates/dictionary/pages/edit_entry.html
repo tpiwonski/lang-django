@@ -1,6 +1,8 @@
 {% extends "dictionary/base.html" %}
 {% block body %}
 {{ block.super }}
-<span>Edit entry</span>
-{% include "dictionary/fragments/edit_entry.html" %}
+{% if entry %}
+    <span>Edit entry</span>
+    {% include "dictionary/fragments/edit_entry.html" %}
+{% endif %}
 {% endblock body %}

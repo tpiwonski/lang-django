@@ -91,6 +91,13 @@ class EntryManager(models.Manager):
 
         return qs.order_by('text')
 
+    def delete_entry_with_translations(self, entry_id):
+        self.get_queryset().filter(Q(source__translated_id=entry_id) | Q(translated__source_id=entry_id)).delete()
+        self.get_queryset().filter(id=entry_id).delete()
+
+    def delete_entry(self, entry_id):
+        self.get_queryset().filter(id=entry_id).delete()
+
 
 class EntryData(models.Model):
     id = models.UUIDField(primary_key=True)

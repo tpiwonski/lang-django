@@ -1,5 +1,6 @@
 from django import forms
 from django.shortcuts import redirect, render
+from django.contrib import messages
 
 from lang.common.component import ComponentView
 from lang.dictionary.controllers import GetEntry, EditEntry
@@ -40,12 +41,17 @@ TranslationFormSet = forms.formset_factory(TranslationForm, formset=TranslationF
 
 class EditEntryView(ComponentView):
     page_template = 'dictionary/pages/edit_entry.html'
+    fragment_template = 'dictionary/fragments/entry_deleted.html'
+    entry_does_not_exist = 'dictionary/pages/entry_does_not_exist.html'
     get_entry_controller = GetEntry()
     edit_entry_controller = EditEntry()
     context_classes = [BaseContext]
 
     def get(self, request, entry_id, *args, **kwargs):
         entry = self.get_entry_controller.execute(entry_id)
+        if not entry['id']:
+            return self.render(self.entry_does_not_exist, {}, **kwargs)
+
         context = {
             'entry': entry,
             'entry_form': EntryForm(entry),
