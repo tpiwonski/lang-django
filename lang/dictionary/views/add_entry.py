@@ -1,12 +1,9 @@
 from django import forms
-from django.views.generic.base import View
-from django.views.generic.base import TemplateResponseMixin
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect
 
-from lang.dictionary.db.entry import LANGUAGES, LANGUAGE_EN, LANGUAGE_PL
-from lang.common.component import ComponentContext, ComponentView
 from lang.dictionary.controllers import AddEntry
-from lang.dictionary.views.base import BaseContext
+from lang.dictionary.db.entry import LANGUAGES, LANGUAGE_EN, LANGUAGE_PL
+from lang.dictionary.views.base import PageView
 
 
 class EntryForm(forms.Form):
@@ -46,10 +43,9 @@ class TranslationFormSet(forms.BaseFormSet):
 TranslationFormSet = forms.formset_factory(TranslationForm, formset=TranslationFormSet, can_delete=True, extra=0)
 
 
-class AddEntryView(ComponentView):
+class AddEntryView(PageView):
     page_template = 'dictionary/pages/add_entry.html'
     add_entry_controller = AddEntry()
-    context_classes = [BaseContext]
 
     def get(self, request, *args, **kwargs):
         context = {

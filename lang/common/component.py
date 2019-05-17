@@ -41,18 +41,28 @@ class ComponentView(ComponentContext, View):
         else:
             context.update(self.get_context_data(**kwargs))
 
-        if self.request.GET.get('ic-request') or self.request.POST.get('ic-request'): 
-            content = {
-                self.fragment_id: render_to_string(self.fragment_template, context, self.request)
-            }
-            for component in self.component_classes:
-                content[component.fragment_id] = render_to_string(component.fragment_template, context, self.request)
+        if self.request.GET.get('ic-request') or self.request.POST.get('ic-request'):
+            content = {}
+            self._render_components(content, context, self.request) 
+            # content = {
+            #     self.fragment_id: render_to_string(self.fragment_template, context, self.request)
+            # }
+            # for component in self.component_classes:
+            #     content[component.fragment_id] = render_to_string(component.fragment_template, context, self.request)
             
             return HttpResponse(json.dumps(content), content_type="application/json")
         else:
             return render(self.request, self.page_template, context)    
 
     #     return render(self.request, template, context)
+    
+    @classmethod
+    def _render_components(cls, content, context, request):
+        if cls.fragment_id not in content:
+            content[cls.fragment_id] = render_to_string(cls.fragment_template, context, request)
+        
+        for component in cls.component_classes:
+            component._render_components(content, context, request)
 
     def render_page(self, context, **kwargs):
         if not context:

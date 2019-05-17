@@ -4,5 +4,7 @@
 {% if entry %}
     <span>Edit entry</span>
     {% include "dictionary/fragments/edit_entry.html" %}
+{% else %}
+<div>Entry does not exist</div>
 {% endif %}
 {% endblock body %}

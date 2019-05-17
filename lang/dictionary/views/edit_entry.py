@@ -5,7 +5,7 @@ from django.contrib import messages
 from lang.common.component import ComponentView
 from lang.dictionary.controllers import GetEntry, EditEntry
 from lang.dictionary.db.entry import LANGUAGES
-from lang.dictionary.views.base import BaseContext
+from lang.dictionary.views.base import BaseContext, PageView
 
 
 class EntryForm(forms.Form):
@@ -39,25 +39,23 @@ class TranslationFormSet(forms.BaseFormSet):
 TranslationFormSet = forms.formset_factory(TranslationForm, formset=TranslationFormSet, extra=0, can_delete=True)
 
 
-class EditEntryView(ComponentView):
+class EditEntryView(PageView):
     page_template = 'dictionary/pages/edit_entry.html'
     fragment_template = 'dictionary/fragments/entry_deleted.html'
-    entry_does_not_exist = 'dictionary/pages/entry_does_not_exist.html'
     get_entry_controller = GetEntry()
     edit_entry_controller = EditEntry()
-    context_classes = [BaseContext]
 
     def get(self, request, entry_id, *args, **kwargs):
         entry = self.get_entry_controller.execute(entry_id)
         if not entry['id']:
-            return self.render(self.entry_does_not_exist, {}, **kwargs)
+            return self.render({}, **kwargs)
 
         context = {
             'entry': entry,
             'entry_form': EntryForm(entry),
             'translation_forms': TranslationFormSet(initial=entry['translations'])
         }
-        return self.render_page(context, **kwargs)
+        return self.render(context, **kwargs)
 
     def post(self, request, entry_id, *args, **kwargs):
         entry = self.get_entry_controller.execute(entry_id)
@@ -71,7 +69,7 @@ class EditEntryView(ComponentView):
                 'entry_form': entry_form,
                 'translation_forms': translation_forms
             }
-            return self.render_page(context, **kwargs)
+            return self.render(context, **kwargs)
 
         self.edit_entry_controller.execute(
             entry_form.cleaned_data, translation_forms.get_translations_data()
