@@ -1,0 +1,26 @@
+<div>
+    <form class="needs-validation" novalidate action="{% url 'add-entries' %}" method="post">
+        {% csrf_token %}
+        {% for entry in entries %}
+        <div>
+            <div>
+                <input type="checkbox" name="entry.{{ forloop.counter0 }}.add" value="1" checked>
+                <span>{{ entry.text }}</span>
+                <input type="hidden" name="entry.{{ forloop.counter0 }}.text" value="{{ entry.text }}">
+                <input type="hidden" name="entry.{{ forloop.counter0 }}.language" value="{{ entry.language }}">
+            </div>
+            <ul>
+            {% for translation in entry.translations %}
+                <li>
+                    <input type="checkbox" name="translation.{{ forloop.parentloop.counter0 }}.{{ forloop.counter0 }}.add" value="1" checked>
+                    <span>{{ translation.text }}</span>
+                    <input type="hidden" readonly name="translation.{{ forloop.parentloop.counter0 }}.{{ forloop.counter0 }}.text" value="{{ translation.text }}">
+                    <input type="hidden" name="translation.{{ forloop.parentloop.counter0 }}.{{ forloop.counter0 }}.language" value="{{ translation.language }}">
+                </li>
+            {% endfor %}
+            </ul>
+        </div>
+        {% endfor %}
+        <input type="submit" class="btn btn-primary col-sm-3" value="Add entries">
+    </form>
+</div>
