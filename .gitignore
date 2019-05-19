@@ -3,3 +3,4 @@
 *.pyc
 .vscode/tags
 __pycache__/
+.idea/

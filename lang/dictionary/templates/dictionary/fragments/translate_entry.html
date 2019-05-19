@@ -1,24 +1,32 @@
 {% load widget_tweaks %}
-<div id="translate-entry">
-<form class="needs-validation" novalidate 
-        ic-post-to="{% url 'translate-entry' %}"  
-        ic-indicator="#indicator" 
-        method="post"
->
-    {% csrf_token %}
-    {% include 'lang/fragments/form_hidden_fields.html' with form=translate_form %}
-    {% include 'lang/fragments/form_errors.html' with form=translate_form %}
-    <div class="form-row">
-        {% include 'lang/fragments/form_field.html' with field=translate_form.text field_class="col" %}
-    </div>
-    <input type="submit" value="Translate">
+<div id="translate-entry" ic-on-beforeTrigger="onBeforePost(evt, elt)">
+    <span>Translate entry</span>
+    <form class="needs-validation" novalidate method="get"
+          ic-get-from="{% url 'translate-entry' %}"
+          ic-indicator="#indicator"
+    >
+        {% include 'lang/fragments/form_hidden_fields.html' with form=translate_form %}
+        {% include 'lang/fragments/form_errors.html' with form=translate_form %}
+        <div class="form-row">
+            {% include 'lang/fragments/form_field.html' with field=translate_form.q field_class="col" %}
+        </div>
+        <input type="submit" value="Translate">
+    </form>
     <div id="indicator" class="spinner-border spinner-border-sm" role="status" style="display:none">
         <span class="sr-only">Loading...</span>
     </div>
-</form>
-{% comment %} <div id="entries-list" ic-dep="*" ic-action="remove" ic-target="this"> {% endcomment %}
-{% if entries %}
-    {% include 'dictionary/fragments/translate_entry_list_form.html' with entries=entries %}
-{% endif %}
-{% comment %} </div> {% endcomment %}
+    {% if entries %}
+        {% include 'dictionary/fragments/translate_entry_list_form.html' with entries=entries %}
+    {% endif %}
+    <script>
+        function onBeforePost(evt, elt) {
+            //var q = elt[0].elements['q'].value;
+            //var url = elt[0].attributes['ic-get-from'].value;
+            //history.pushState({}, "", url + "?q=" + q);
+            //$('#translate-entry-list-form').empty();
+        }
+        window.onpopstate = function(event) {
+          document.location = document.location;
+        };
+    </script>
 </div>

@@ -1,5 +1,8 @@
-<div>
-    <form class="needs-validation" novalidate action="{% url 'add-entries' %}" method="post">
+<div id="translate-entry-list-form">
+    <form class="needs-validation" novalidate method="post"
+          ic-post-to="{% url 'add-entries' %}"
+          ic-indicator="#indicator"
+    >
         {% csrf_token %}
         {% for entry in entries %}
         <div>
@@ -23,4 +26,7 @@
         {% endfor %}
         <input type="submit" class="btn btn-primary col-sm-3" value="Add entries">
     </form>
+    <div id="indicator" class="spinner-border spinner-border-sm" role="status" style="display:none">
+        <span class="sr-only">Loading...</span>
+    </div>
 </div>

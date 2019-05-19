@@ -1,6 +1,5 @@
 {% load widget_tweaks %}
 <div id="search-entries" ic-on-beforeTrigger="onBeforePost(evt, elt)">
-    {% comment %} <input  id="foo" name="foo" value="foo" ic-global-include="#foo"> {% endcomment %}
     <form class="needs-validation" novalidate method="get"
         ic-get-from="{% url 'search-entries' %}"  
         ic-indicator="#indicator" 
@@ -11,10 +10,10 @@
             {% include 'lang/fragments/form_field.html' with field=search_form.q field_class="col" %}
         </div>
         <input type="submit" value="Search">
-        <div id="indicator" class="spinner-border spinner-border-sm" role="status" style="display:none">
-            <span class="sr-only">Loading...</span>
-        </div>
     </form>
+    <div id="indicator" class="spinner-border spinner-border-sm" role="status" style="display:none">
+        <span class="sr-only">Loading...</span>
+    </div>
     {% if entries %}
         {% include 'dictionary/fragments/entry_list.html' with entries=entries %}
     {% endif %}
@@ -23,7 +22,7 @@
 function onBeforePost(evt, elt) {
     var q = elt[0].elements['q'].value;
     var url = elt[0].attributes['ic-get-from'].value;
-    history.pushState({}, "search " + q, url + "?q=" + q);
+    history.pushState({}, "", url + "?q=" + q);
     $('#entry-list').empty();
 }
 window.onpopstate = function(event) {
