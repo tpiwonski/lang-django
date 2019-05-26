@@ -43,6 +43,7 @@ class EntryManager(models.Manager):
 
     def save(self, entry):
         from lang.dictionary.models.translation import Translation
+        from lang.dictionary.models.example import Example
 
         q = Q()
         for translation in entry._remove_translations:
@@ -62,8 +63,14 @@ class EntryManager(models.Manager):
             translation.save()
             Translation.create(source=entry, translated=translation).save()
 
+        for example in entry._add_examples:
+            example.save()
+            Example.create(entry=entry, example=example).save()
+
         entry._add_translations = []
+        entry._add_examples = []
         entry._add_recordings = []
+        entry._remove_examples = []
         entry._remove_translations = []
 
     def delete(self, entry_id):
@@ -118,6 +125,8 @@ class EntryData(models.Model):
         self._add_translations = []
         self._remove_translations = []
         self._add_recordings = []
+        self._add_examples = []
+        self._remove_examples = []
 
     @property
     def translations(self):
@@ -125,11 +134,26 @@ class EntryData(models.Model):
                 [t.source for t in self.translated.all()] +
                 self._add_translations)
 
+    @property
+    def examples(self):
+        return ([e.example for e in self.entry_examples.all()] +
+                self._add_examples)
+
     def add_translation(self, entry):
         self._add_translations.append(entry)
 
     def remove_translation(self, entry):
         self._remove_translations.append(entry)
+
+    def add_example(self, entry):
+        if self.has_example(entry):
+            raise Exception("Example already exists")
+
+        self._add_examples.append(entry)
+
+    def has_example(self, entry):
+        return any([e for e in self.examples
+                    if e.text == entry.text and e.language == entry.language])
 
     def add_recording(self, recording):
         self._add_recordings.append(recording)

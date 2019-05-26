@@ -9,10 +9,27 @@ class EntryInput(Serializer):
     language = ChoiceField(choices=LANGUAGES)
 
 
-class TranslationOutput(ModelSerializer):
+class ExampleTranslationOutput(ModelSerializer):
+
     class Meta:
         model = Entry
         fields = ['id', 'text', 'language']
+
+
+class EntryExampleOutput(ModelSerializer):
+    translations = ExampleTranslationOutput(many=True)
+
+    class Meta:
+        model = Entry
+        fields = ['id', 'text', 'translations']
+
+
+class TranslationOutput(ModelSerializer):
+    examples = EntryExampleOutput(many=True)
+
+    class Meta:
+        model = Entry
+        fields = ['id', 'text', 'language', 'examples']
 
 
 class EntryRecordingOutput(ModelSerializer):
@@ -24,11 +41,12 @@ class EntryRecordingOutput(ModelSerializer):
 
 class EntryOutput(ModelSerializer):
     translations = TranslationOutput(many=True)
+    examples = EntryExampleOutput(many=True)
     recordings = EntryRecordingOutput(many=True)
 
     class Meta:
         model = Entry
-        fields = ['id', 'text', 'language', 'translations', 'recordings']
+        fields = ['id', 'text', 'language', 'translations', 'recordings', 'examples']
 
 
 class TranslationInput(Serializer):

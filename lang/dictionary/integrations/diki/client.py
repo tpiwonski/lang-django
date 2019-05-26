@@ -1,5 +1,6 @@
 from requests import Session
 from bs4 import BeautifulSoup
+import html
 
 # dict(
 #     entities=list(
@@ -27,7 +28,7 @@ class HtmlClient(object):
     def translate(self, entry):
         response = self.session.get("https://diki.pl/{}".format(entry))
         parser = HtmlParser()
-        return parser.parse_results(response.content)
+        return parser.parse_results(response.content.decode('utf-8').replace('&apos;', "'"))
 
 
 class HtmlParser(object):
@@ -98,7 +99,7 @@ class HtmlParser(object):
         translations = self.parse_translations(content)
         recordings = self.parse_recordings(content, css='.hw + ')
         examples = self.parse_examples(content)
-        return dict(part_of_speech=part_of_speech, translations=translations, recordings=recordings)
+        return dict(part_of_speech=part_of_speech, translations=translations, recordings=recordings, examples=examples)
 
     def parse_part_of_speech(self, content):
         part_of_speech_tag = content.find_previous_sibling('div', class_='partOfSpeechSectionHeader')
@@ -112,7 +113,7 @@ class HtmlParser(object):
         translations = self.parse_translations(content)
         recordings = self.parse_recordings(content, css='.hw + ')
         examples = self.parse_examples(content)
-        return dict(part_of_speech=part_of_speech, translations=translations, recordings=recordings)
+        return dict(part_of_speech=part_of_speech, translations=translations, recordings=recordings, examples=examples)
 
     def parse_translations(self, content):
         translation_tags = content.find_all('span', class_='hw', recursive=False)
@@ -150,8 +151,8 @@ class HtmlParser(object):
                 continue
 
             examples.append({
-                'text': text,
-                'translation': translation,
+                'text': html.unescape(text),
+                'translation': html.unescape(translation),
                 'recording': recordings[0]
             })
 

@@ -10,7 +10,26 @@
     </div>
     <ul>
     {% for translation in entry.translations %}
-        <li><a href="{% url 'entry-view' translation.id %}">{{ translation.text }}</a></li>
+        <li>
+            <a href="{% url 'entry-view' translation.id %}">{{ translation.text }}</a>
+            <ul>
+            {% for example in translation.examples %}
+                <li>
+                    <a href="{% url 'entry-view' example.id %}">{{ example.text }}</a>
+                    <ul>
+                    {% for example_translation in example.translations %}
+                        <a href="{% url 'entry-view' example_translation.id %}">{{ example_translation.text }}</a>
+                    {% endfor %}
+                    </ul>
+                </li>
+            {% endfor %}
+            </ul>
+        </li>
+    {% endfor %}
+    </ul>
+    <ul>
+    {% for example in entry.examples %}
+        <li><a href="{% url 'entry-view' example.id %}">{{ example.text }}</a></li>
     {% endfor %}
     </ul>
 {% endif %}

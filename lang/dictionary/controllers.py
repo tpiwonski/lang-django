@@ -138,6 +138,25 @@ class AddEntries(object):
                 if not entry.has_translation(translation):
                     entry.add_translation(translation)
 
+                for example in translation_data.get('examples', []):
+                    example_entry = self.entry_repository.get_by_text(example['text'], entry_data['language'])
+                    if not example_entry:
+                        example_entry = Entry.create(example['text'], entry_data['language'])
+
+                    example_translation = self.entry_repository.get_by_text(example['translation'], translation_data['language'])
+                    if not example_translation:
+                        example_translation = Entry.create(example['translation'], translation_data['language'])
+
+                    if not example_entry.has_translation(example_translation):
+                        example_entry.add_translation(example_translation)
+
+                    self.entry_repository.save(example_entry)
+
+                    if not translation.has_example(example_entry):
+                        translation.add_example(example_entry)
+
+                self.entry_repository.save(translation)
+
             self.entry_repository.save(entry)
             entries.append(entry)
 

@@ -20,7 +20,8 @@ class TranslationService(object):
                     translations.append({
                         'text': translation['text'],
                         'language': translation_language,
-                        'recordings': meaning['recordings']
+                        'recordings': meaning['recordings'],
+                        'examples': meaning['examples']
                     })
             
             entries.append({

@@ -1,2 +1,3 @@
-from lang.dictionary.models.entry import Entry, LANGUAGES
-from lang.dictionary.models.translation import Translation
+from .entry import Entry, LANGUAGES
+from .translation import Translation
+from .example import Example

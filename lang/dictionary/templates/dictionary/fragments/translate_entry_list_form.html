@@ -17,8 +17,17 @@
                 <li>
                     <input type="checkbox" name="translation.{{ forloop.parentloop.counter0 }}.{{ forloop.counter0 }}.add" value="1" checked>
                     <span>{{ translation.text }}</span>
-                    <input type="hidden" readonly name="translation.{{ forloop.parentloop.counter0 }}.{{ forloop.counter0 }}.text" value="{{ translation.text }}">
+                    <input type="hidden" name="translation.{{ forloop.parentloop.counter0 }}.{{ forloop.counter0 }}.text" value="{{ translation.text }}">
                     <input type="hidden" name="translation.{{ forloop.parentloop.counter0 }}.{{ forloop.counter0 }}.language" value="{{ translation.language }}">
+                    <ul>
+                    {% for example in translation.examples %}
+                        <li>
+                            <span>{{ example.text }} - {{ example.translation }}</span>
+                            <input type="hidden" name="example.{{ forloop.parentloop.parentloop.counter0 }}.{{ forloop.parentloop.counter0 }}.{{ forloop.counter0 }}.text" value="{{ example.text }}">
+                            <input type="hidden" name="example.{{ forloop.parentloop.parentloop.counter0 }}.{{ forloop.parentloop.counter0 }}.{{ forloop.counter0 }}.translation" value="{{ example.translation }}">
+                        </li>
+                    {% endfor %}
+                    </ul>
                 </li>
             {% endfor %}
             </ul>
