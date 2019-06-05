@@ -48,8 +48,8 @@ class AddEntryTranslationsView(PageView):
                 _, entry_no, entry_prop = key.split('.')
                 data.setdefault(entry_no, {})[entry_prop] = value
             elif key.startswith('translation.'):
-                _, entry_no, translation_no, translation_prop = key.split('.')
-                data.setdefault(entry_no, {}).setdefault('translations', {}).setdefault(translation_no, {})[translation_prop] = value
+                _, entry_no, translation_no, translation_entry_no, translation_prop = key.split('.')
+                data.setdefault(entry_no, {}).setdefault('translations', {}).setdefault(translation_no, {}).setdefault('entries', {}).setdefault(translation_entry_no, {}).setdefault('entry', {})[translation_prop] = value
             elif key.startswith('example.'):
                 _, entry_no, translation_no, example_no, example_prop = key.split('.')
                 data.setdefault(entry_no, {}).setdefault('translations', {}).setdefault(translation_no, {}).setdefault('examples', {}).setdefault(example_no, {})[example_prop] = value
@@ -57,11 +57,16 @@ class AddEntryTranslationsView(PageView):
         entries = []
         for entry in data.values():
             if 'add' in entry:
-                translations = [{
-                    'text': translation['text'],
-                    'language': translation['language'],
-                    'examples': [example for example in translation.get('examples', {}).values()]
-                } for translation in entry['translations'].values() if 'add' in translation]
+                translations = []
+                for translation in entry['translations'].values():
+                    for translation_entry in translation['entries'].values():
+                        translation_entry = translation_entry['entry']
+                        if 'add' in translation_entry:
+                            translations.append({
+                                'text': translation_entry['text'],
+                                'language': translation_entry['language'],
+                                'examples': [example for example in translation.get('examples', {}).values()]
+                            })
 
                 if translations:
                     entries.append({

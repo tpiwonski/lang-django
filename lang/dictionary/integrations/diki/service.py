@@ -16,14 +16,13 @@ class TranslationService(object):
         for entry in result['entries']:
             translations = []
             for meaning in entry['meanings']:
-                for translation in meaning['translations']:
-                    translations.append({
-                        'text': translation['text'],
-                        'language': translation_language,
-                        'recordings': meaning['recordings'],
-                        'examples': meaning['examples']
-                    })
-            
+                translations.append({
+                    'entries': meaning['translations'],
+                    'language': translation_language,
+                    'recordings': meaning['recordings'],
+                    'examples': meaning['examples']
+                })
+
             entries.append({
                 'text': entry['text'],
                 'language': entry_language,

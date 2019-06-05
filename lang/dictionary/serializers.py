@@ -1,6 +1,6 @@
 from rest_framework.serializers import Serializer, CharField, ChoiceField, UUIDField, ModelSerializer, SerializerMethodField
 
-from lang.dictionary.models import Entry, LANGUAGES, Translation
+from lang.dictionary.models import Entry, LANGUAGES, Relation
 from lang.dictionary.db.entry import EntryRecordingData
 
 
@@ -25,11 +25,11 @@ class EntryExampleOutput(ModelSerializer):
 
 
 class TranslationOutput(ModelSerializer):
-    examples = EntryExampleOutput(many=True)
+    # examples = EntryExampleOutput(many=True)
 
     class Meta:
         model = Entry
-        fields = ['id', 'text', 'language', 'examples']
+        fields = ['id', 'text', 'language'] #, 'examples']
 
 
 class EntryRecordingOutput(ModelSerializer):
@@ -41,12 +41,12 @@ class EntryRecordingOutput(ModelSerializer):
 
 class EntryOutput(ModelSerializer):
     translations = TranslationOutput(many=True)
-    examples = EntryExampleOutput(many=True)
+    # examples = EntryExampleOutput(many=True)
     recordings = EntryRecordingOutput(many=True)
 
     class Meta:
         model = Entry
-        fields = ['id', 'text', 'language', 'translations', 'recordings', 'examples']
+        fields = ['id', 'text', 'language', 'translations', 'recordings'] #, 'examples']
 
 
 class TranslationInput(Serializer):

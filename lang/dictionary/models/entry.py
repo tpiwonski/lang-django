@@ -3,7 +3,7 @@ import uuid
 from django.db import models
 
 from lang.dictionary.db.entry import EntryManager, EntryData, LANGUAGES, EntryRecordingData
-from lang.dictionary.models.translation import Translation
+# from lang.dictionary.models.translation import Translation
 
 
 class Entry(EntryData):
@@ -17,9 +17,9 @@ class Entry(EntryData):
 
     def add_translation(self, entry):
         if self.has_translation(entry):
-            return
+            return None
 
-        super().add_translation(entry)
+        return super().add_translation(entry)
 
     def has_translation(self, entry):
         return any([t for t in self.translations 
