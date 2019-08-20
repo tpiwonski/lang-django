@@ -1,9 +1,9 @@
 import uuid
+from dataclasses import dataclass
+from typing import List
 
-from django.db import models
-
-from lang.dictionary.db.entry import EntryManager, EntryData, LANGUAGES, EntryRecordingData
-# from lang.dictionary.models.translation import Translation
+from lang.dictionary.db.entry import EntryData, EntryRecordingData, LANGUAGES
+# from lang.models import Example
 
 
 class Entry(EntryData):
@@ -28,3 +28,16 @@ class Entry(EntryData):
     def add_recordings(self, recordings_data):
         for recording_data in recordings_data:
             self.add_recording(EntryRecordingData(id=uuid.uuid4(), entry=self, url=recording_data['url']))
+
+    @property
+    def foo_translations(self):
+        from lang.dictionary.db.relation import RELATION_KIND_TRANSLATION
+        return ([EntryTranslation(t.subject, [e.example for e in t.relation_examples.all()]) for t in self.related_subjects.filter(kind=RELATION_KIND_TRANSLATION)] +
+                [EntryTranslation(t.object, [e.example for e in t.relation_examples.all()]) for t in self.related_objects.filter(kind=RELATION_KIND_TRANSLATION)] +
+                [EntryTranslation(t.subject, [e.example for e in t.relation_examples.all()]) for t in self._add_translations])
+
+
+@dataclass
+class EntryTranslation:
+    entry: Entry
+    examples: List[int]

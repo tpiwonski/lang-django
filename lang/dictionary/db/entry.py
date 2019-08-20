@@ -56,6 +56,10 @@ class EntryManager(models.Manager):
         for translation in entry._add_translations:
             translation.save()
             for example in translation._add_examples:
+                self.save(example.example.object)
+                self.save(example.example.subject)
+                # example.example.object.save()
+                # example.example.subject.save()
                 example.example.save()
                 example.save()
 
@@ -128,18 +132,27 @@ class EntryData(models.Model):
 
     @property
     def translations(self):
-        return ([t.subject for t in self.related_subjects.all()] +
-                [t.object for t in self.related_objects.all()] +
+        from lang.dictionary.db.relation import RELATION_KIND_TRANSLATION
+        return ([t.subject for t in self.related_subjects.filter(kind=RELATION_KIND_TRANSLATION)] +
+                [t.object for t in self.related_objects.filter(kind=RELATION_KIND_TRANSLATION)] +
                 [t.subject for t in self._add_translations])
 
-    # @property
-    # def examples(self):
-    #     return ([e.example for e in self.entry_examples.all()] +
-    #             self._add_examples)
+    def get_examples(self, entry):
+        from lang.dictionary.db.relation import RELATION_KIND_TRANSLATION
+        translations = ([t for t in self.related_subjects.filter(subject=entry, kind=RELATION_KIND_TRANSLATION)] +
+                        [t for t in self.related_objects.filter(object=entry, kind=RELATION_KIND_TRANSLATION)] +
+                        [t for t in self._add_translations if t.subject == entry])
+
+        examples = set()
+        for t in translations:
+            examples.update((e.example for e in t.relation_examples.all()))
+
+        return examples
 
     def get_translation(self, entry):
-        translations = ([t for t in self.related_subjects.all() if t.subject == entry] +
-                        [t for t in self.related_objects.all() if t.object == entry] +
+        from lang.dictionary.db.relation import RELATION_KIND_TRANSLATION
+        translations = ([t for t in self.related_subjects.filter(kind=RELATION_KIND_TRANSLATION) if t.subject == entry] +
+                        [t for t in self.related_objects.filter(kind=RELATION_KIND_TRANSLATION) if t.object == entry] +
                         [t for t in self._add_translations if t.subject == entry])
         if translations:
             return translations[0]

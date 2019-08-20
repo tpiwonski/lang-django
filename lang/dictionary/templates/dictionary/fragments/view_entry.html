@@ -9,18 +9,13 @@
         {% comment %} <a href="{% url 'entry-view' entry.id %}" ic-delete-from="{% url 'entry-view' entry.id %}"><i class="far fa-trash-alt"></i></a> {% endcomment %}
     </div>
     <ul>
-    {% for translation in entry.translations %}
+    {% for translation in entry.foo_translations %}
         <li>
-            <a href="{% url 'entry-view' translation.id %}">{{ translation.text }}</a>
+            <a href="{% url 'entry-view' translation.entry.id %}">{{ translation.entry.text }}</a>
             <ul>
             {% for example in translation.examples %}
                 <li>
-                    <a href="{% url 'entry-view' example.id %}">{{ example.text }}</a>
-                    <ul>
-                    {% for example_translation in example.translations %}
-                        <a href="{% url 'entry-view' example_translation.id %}">{{ example_translation.text }}</a>
-                    {% endfor %}
-                    </ul>
+                    <span><a href="{% url 'entry-view' example.object.id %}">{{ example.object.text }}</a> - <a href="{% url 'entry-view' example.subject.id %}">{{ example.subject.text }}</a></span>
                 </li>
             {% endfor %}
             </ul>

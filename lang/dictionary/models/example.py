@@ -19,7 +19,5 @@ class Example(ExampleData):
         proxy = True
 
     @staticmethod
-    def create(text, translation):
-        return Example(
-            id=uuid.uuid4(), text=text, translation=translation
-        )
+    def create(entry, translation):
+        return Example(id=uuid.uuid4(), object=entry, subject=translation)
