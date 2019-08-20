@@ -11,6 +11,9 @@ class Entry(EntryData):
     class Meta:
         proxy = True
 
+    def __str__(self):
+        return "{}".format(self.text)
+
     @staticmethod
     def create(text, language):
         return Entry(id=uuid.uuid4(), text=text, language=language)
