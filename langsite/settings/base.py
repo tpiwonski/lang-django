@@ -72,6 +72,10 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
+            'libraries': {
+                'lorem_ipsum': 'lang.dictionary.components.lorem_ipsum',
+                'fizz_bazz': 'lang.dictionary.components.fizz_bazz',
+            }
         },
     },
 ]
