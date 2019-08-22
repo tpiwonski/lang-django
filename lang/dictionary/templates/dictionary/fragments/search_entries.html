@@ -1,4 +1,5 @@
 {% load widget_tweaks %}
+{% load lorem_ipsum %}
 <div id="search-entries" ic-on-beforeTrigger="onBeforePost(evt, elt)">
     <form class="needs-validation" novalidate method="get"
         ic-get-from="{% url 'search-entries' %}"  
@@ -18,6 +19,7 @@
         {% include 'dictionary/fragments/entry_list.html' with entries=entries %}
     {% endif %}
 </div>
+{% lorem_ipsum %}
 <script>
 function onBeforePost(evt, elt) {
     var q = elt[0].elements['q'].value;
