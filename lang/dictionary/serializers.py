@@ -1,6 +1,6 @@
 from rest_framework.serializers import Serializer, CharField, ChoiceField, UUIDField, ModelSerializer, SerializerMethodField
 
-from lang.dictionary.models import Entry, LANGUAGES, Relation, Example
+from lang.dictionary.models import Entry, LANGUAGES, Translation, Example
 from lang.dictionary.db.entry import EntryRecordingData
 
 

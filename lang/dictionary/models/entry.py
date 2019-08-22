@@ -2,11 +2,11 @@ import uuid
 from dataclasses import dataclass
 from typing import List
 
-from lang.dictionary.db.entry import EntryData, EntryRecordingData, LANGUAGES
+from lang.dictionary.db.entry import EntryModel, EntryRecordingData, LANGUAGES
 # from lang.models import Example
 
 
-class Entry(EntryData):
+class Entry(EntryModel):
 
     class Meta:
         proxy = True
@@ -34,10 +34,9 @@ class Entry(EntryData):
 
     @property
     def foo_translations(self):
-        from lang.dictionary.db.relation import RELATION_KIND_TRANSLATION
-        return ([EntryTranslation(t.subject, [e.example for e in t.relation_examples.all()]) for t in self.related_subjects.filter(kind=RELATION_KIND_TRANSLATION)] +
-                [EntryTranslation(t.object, [e.example for e in t.relation_examples.all()]) for t in self.related_objects.filter(kind=RELATION_KIND_TRANSLATION)] +
-                [EntryTranslation(t.subject, [e.example for e in t.relation_examples.all()]) for t in self._add_translations])
+        return ([EntryTranslation(t.subject, [e.example for e in t.translation_examples.all()]) for t in self.related_subjects.all()] +
+                [EntryTranslation(t.object, [e.example for e in t.translation_examples.all()]) for t in self.related_objects.all()] +
+                [EntryTranslation(t.subject, [e.example for e in t.translation_examples.all()]) for t in self._add_translations])
 
 
 @dataclass

@@ -37,14 +37,14 @@ class EntryManager(models.Manager):
         return EntryQuerySet(self.model, using=self._db)
 
     def save(self, entry):
-        from lang.dictionary.models.relation import Relation, RELATION_KIND_TRANSLATION
+        from lang.dictionary.models.translation import Translation
 
         q = Q()
         for translation in entry._remove_translations:
-            q |= Q(object=entry, subject=translation, kind=RELATION_KIND_TRANSLATION) | Q(object=translation, subject=entry, kind=RELATION_KIND_TRANSLATION)
+            q |= Q(object=entry, subject=translation) | Q(object=translation, subject=entry)
 
         if q:
-            Relation.objects.filter(q).delete()
+            Translation.objects.filter(q).delete()
 
         entry.save()
         for translation in entry.translations:
@@ -108,7 +108,7 @@ class EntryManager(models.Manager):
         self.get_queryset().filter(id=entry_id).delete()
 
 
-class EntryData(models.Model):
+class EntryModel(models.Model):
     id = models.UUIDField(primary_key=True)
     text = models.CharField(max_length=255)
     language = models.CharField(max_length=2, choices=LANGUAGES)
@@ -122,7 +122,7 @@ class EntryData(models.Model):
         unique_together = (('text', 'language'),)
     
     def __init__(self, *args, **kwargs):
-        super(EntryData, self).__init__(*args, **kwargs)
+        super(EntryModel, self).__init__(*args, **kwargs)
 
         self._add_translations = []
         self._remove_translations = []
@@ -132,27 +132,24 @@ class EntryData(models.Model):
 
     @property
     def translations(self):
-        from lang.dictionary.db.relation import RELATION_KIND_TRANSLATION
-        return ([t.subject for t in self.related_subjects.filter(kind=RELATION_KIND_TRANSLATION)] +
-                [t.object for t in self.related_objects.filter(kind=RELATION_KIND_TRANSLATION)] +
+        return ([t.subject for t in self.related_subjects.all()] +
+                [t.object for t in self.related_objects.all()] +
                 [t.subject for t in self._add_translations])
 
     def get_examples(self, entry):
-        from lang.dictionary.db.relation import RELATION_KIND_TRANSLATION
-        translations = ([t for t in self.related_subjects.filter(subject=entry, kind=RELATION_KIND_TRANSLATION)] +
-                        [t for t in self.related_objects.filter(object=entry, kind=RELATION_KIND_TRANSLATION)] +
+        translations = ([t for t in self.related_subjects.filter(subject=entry)] +
+                        [t for t in self.related_objects.filter(object=entry)] +
                         [t for t in self._add_translations if t.subject == entry])
 
         examples = set()
         for t in translations:
-            examples.update((e.example for e in t.relation_examples.all()))
+            examples.update((e.example for e in t.translation_examples.all()))
 
         return examples
 
     def get_translation(self, entry):
-        from lang.dictionary.db.relation import RELATION_KIND_TRANSLATION
-        translations = ([t for t in self.related_subjects.filter(kind=RELATION_KIND_TRANSLATION) if t.subject == entry] +
-                        [t for t in self.related_objects.filter(kind=RELATION_KIND_TRANSLATION) if t.object == entry] +
+        translations = ([t for t in self.related_subjects.all() if t.subject == entry] +
+                        [t for t in self.related_objects.all() if t.object == entry] +
                         [t for t in self._add_translations if t.subject == entry])
         if translations:
             return translations[0]
@@ -160,8 +157,8 @@ class EntryData(models.Model):
         return None
 
     def add_translation(self, entry):
-        from lang.dictionary.models.relation import Relation, RELATION_KIND_TRANSLATION
-        translation = Relation.create(object=self, subject=entry, kind=RELATION_KIND_TRANSLATION)
+        from lang.dictionary.models.translation import Translation
+        translation = Translation.create(object=self, subject=entry)
         self._add_translations.append(translation)
         return translation
 
