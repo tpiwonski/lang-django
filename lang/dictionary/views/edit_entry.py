@@ -1,11 +1,10 @@
 from django import forms
-from django.shortcuts import redirect, render
-from django.contrib import messages
+from django.shortcuts import redirect
 
-from lang.common.component import ComponentView
-from lang.dictionary.controllers import GetEntry, EditEntry
+from lang.dictionary.controllers.edit_entry import EditEntry
+from lang.dictionary.controllers.get_entry import GetEntry
 from lang.dictionary.db.entry import LANGUAGES
-from lang.dictionary.views.base import BaseContext, PageView
+from lang.dictionary.views.base import PageView
 
 
 class EntryForm(forms.Form):

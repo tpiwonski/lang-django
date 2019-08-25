@@ -1,9 +1,5 @@
-from django.shortcuts import redirect, HttpResponse, render
-from django.contrib import messages
-
-from lang.common.component import ComponentView, ComponentContext
-from lang.dictionary.controllers import DeleteEntry
-from lang.dictionary.views.base import BaseContext, PageView
+from lang.dictionary.controllers.delete_entry import DeleteEntry
+from lang.dictionary.views.base import PageView
 
 
 class DeleteEntryView(PageView):

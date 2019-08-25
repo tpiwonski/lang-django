@@ -1,7 +1,8 @@
 from django import forms
 from django.shortcuts import redirect
 
-from lang.dictionary.controllers import TranslateEntry, AddEntries
+from lang.dictionary.controllers.add_entries import AddEntries
+from lang.dictionary.controllers.translate_entry import TranslateEntry
 from lang.dictionary.views.base import PageView
 from lang.dictionary.views.current_date import CurrentDateView
 
