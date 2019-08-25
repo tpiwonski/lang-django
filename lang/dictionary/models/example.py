@@ -13,4 +13,4 @@ class Example(ExampleModel):
 
     @staticmethod
     def create(entry, translation):
-        return Example(id=uuid.uuid4(), object=entry, subject=translation)
+        return Example.objects.create(id=uuid.uuid4(), object=entry, subject=translation)

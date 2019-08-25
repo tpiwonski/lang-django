@@ -53,14 +53,14 @@ class EditEntryView(PageView):
         context = {
             'entry': entry,
             'entry_form': EntryForm(entry),
-            'translation_forms': TranslationFormSet(initial=entry['translations'])
+            'translation_forms': TranslationFormSet(initial=entry['translated_entries'])
         }
         return self.render(context, **kwargs)
 
     def post(self, request, entry_id, *args, **kwargs):
         entry = self.get_entry_controller.execute(entry_id)
         entry_form = EntryForm(request.POST)
-        translation_forms = TranslationFormSet(request.POST, initial=entry['translations'])
+        translation_forms = TranslationFormSet(request.POST, initial=entry['translated_entries'])
         valid_entry = entry_form.is_valid()
         valid_translations = translation_forms.is_valid()
         if not valid_entry or not valid_translations:

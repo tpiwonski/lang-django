@@ -10,22 +10,10 @@ class TranslationModel(models.Model):
         db_table = 'dictionary_translation'
         unique_together = (('object', 'subject'),)
 
-    def __init__(self, *args, **kwargs):
-        super(TranslationModel, self).__init__(*args, **kwargs)
+    @property
+    def examples(self):
+        from lang.dictionary.models import Example
+        return Example.objects.filter(example_translations__translation=self).all()
 
-        self._add_examples = []
-        self._remove_examples = []
-
-    def get_example(self, example):
-        translation_example = [e for e in self.translation_examples.all() if e.example == example]
-        if translation_example:
-            return translation_example[0]
-
-        return None
-
-    def add_example(self, example):
-        from lang.dictionary.models import TranslationExample
-
-        translation_example = TranslationExample.create(translation=self, example=example)
-        self._add_examples.append(translation_example)
-        return translation_example
+    def has_example(self, example):
+        return self.translation_examples.filter(example=example).exists()

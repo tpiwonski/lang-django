@@ -9,7 +9,7 @@
         {% comment %} <a href="{% url 'entry-view' entry.id %}" ic-delete-from="{% url 'entry-view' entry.id %}"><i class="far fa-trash-alt"></i></a> {% endcomment %}
     </div>
     <ul>
-    {% for translation in entry.foo_translations %}
+    {% for translation in entry.translations %}
         <li>
             <a href="{% url 'entry-view' translation.entry.id %}">{{ translation.entry.text }}</a>
             <ul>

@@ -13,4 +13,4 @@ class TranslationExample(TranslationExampleModel):
 
     @staticmethod
     def create(translation, example):
-        return TranslationExample(id=uuid.uuid4(), translation=translation, example=example)
+        return TranslationExample.objects.create(id=uuid.uuid4(), translation=translation, example=example)

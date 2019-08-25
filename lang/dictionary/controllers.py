@@ -1,7 +1,9 @@
 import uuid
 
+from django.db import transaction
+
 from lang.dictionary.models import Entry, Example
-from lang.dictionary.serializers import EntryOutput, AddEntryOutput
+from lang.dictionary.serializers import AddEntryOutput, ViewEntryOutput, EditEntryOutput
 from lang.dictionary.integrations.diki.service import TranslationService
 
 # class AddEntry(object):
@@ -18,7 +20,15 @@ class GetEntry(object):
 
     def execute(self, entry_id):
         entry = self.entry_repository.get_by_id(entry_id)
-        return EntryOutput(entry).data
+        return EditEntryOutput(entry).data
+
+
+class ViewEntry(object):
+    entry_repository = Entry.objects
+
+    def execute(self, entry_id):
+        entry = self.entry_repository.get_by_id(entry_id)
+        return ViewEntryOutput(entry).data
 
 
 class GetAllEntries(object):
@@ -26,7 +36,7 @@ class GetAllEntries(object):
 
     def execute(self):
         entries = self.entry_repository.get_all()
-        return [EntryOutput(entry).data for entry in entries]
+        return [ViewEntryOutput(entry).data for entry in entries]
 
 
 class SearchEntries(object):
@@ -34,12 +44,13 @@ class SearchEntries(object):
 
     def execute(self, text):
         entries = self.entry_repository.search_with_text(text)
-        return [EntryOutput(entry).data for entry in entries]
+        return [ViewEntryOutput(entry).data for entry in entries]
 
 
 class AddEntry(object):
     entry_repository = Entry.objects
 
+    @transaction.atomic
     def execute(self, entry_data, translations_data):
         entry = self.entry_repository.get_by_text(entry_data['text'], entry_data['language'])
         if not entry:
@@ -54,7 +65,7 @@ class AddEntry(object):
                 entry.add_translation(translation)
 
         self.entry_repository.save(entry)
-        return EntryOutput(entry).data
+        return ViewEntryOutput(entry).data
 
 
 class EditEntry(object):
@@ -65,7 +76,7 @@ class EditEntry(object):
         entry.text = entry_data['text']
         entry.language = entry_data['language']
 
-        for translation in entry.translations:
+        for translation in entry.translated_entries:
             if translation.id not in [t['id'] for t in translations_data]:
                 entry.remove_translation(translation)
 
@@ -87,7 +98,7 @@ class EditEntry(object):
                     entry.add_translation(translation)
 
         self.entry_repository.save(entry)
-        return EntryOutput(entry).data
+        return ViewEntryOutput(entry).data
 
 
 class TranslateEntry(object):
@@ -123,6 +134,7 @@ class AddEntries(object):
     entry_repository = Entry.objects
     example_repository = Example.objects
 
+    @transaction.atomic
     def execute(self, results):
         entries = []
         for entry_data in results:
@@ -159,9 +171,9 @@ class AddEntries(object):
 
                         example = Example.create(example_entry, example_translation)
 
-                    relation_example = relation.get_example(example)
-                    if not relation_example:
-                        relation_example = relation.add_example(example)
+                    # relation_example = relation.get_example(example)
+                    if not relation.has_example(example):
+                        relation.add_example(example)
 
                     # example_entry = self.entry_repository.get_by_text(example['text'], entry_data['language'])
                     # if not example_entry:
@@ -187,7 +199,7 @@ class AddEntries(object):
             # self.entry_repository.save(entry)
             entries.append(entry)
 
-        return [EntryOutput(entry).data for entry in entries]
+        return [ViewEntryOutput(entry).data for entry in entries]
 
 
 class DeleteEntry(object):
