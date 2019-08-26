@@ -1,4 +1,5 @@
-from .entry import Entry, LANGUAGES
+from .entry import *
 # from .translation import Translation
-from .example import Example, RelationExample
-from .relation import Relation
+from .translation_example import *
+from .translation import *
+from .example import *

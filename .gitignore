@@ -1,6 +1,7 @@
 .venv/
 *.sqlite3
 *.pyc
-.vscode/tags
+.vscode/
 __pycache__/
 .idea/
+langsite/static/

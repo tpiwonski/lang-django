@@ -72,6 +72,11 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
+            'libraries': {
+                'view_entry': 'lang.dictionary.components.view_entry',
+                'entry_list': 'lang.dictionary.components.entry_list',
+                'entry_list_item': 'lang.dictionary.components.entry_list_item',
+            }
         },
     },
 ]

@@ -1,7 +1,7 @@
 from django import forms
 from django.shortcuts import redirect
 
-from lang.dictionary.controllers import AddEntry
+from lang.dictionary.controllers.add_entry import AddEntry
 from lang.dictionary.db.entry import LANGUAGES, LANGUAGE_EN, LANGUAGE_PL
 from lang.dictionary.views.base import PageView
 

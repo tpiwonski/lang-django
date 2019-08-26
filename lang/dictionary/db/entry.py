@@ -12,23 +12,12 @@ LANGUAGES = (
 
 
 class EntryQuerySet(models.QuerySet):
-    def with_translations(self):
-        # from dictionary.models import Translation
 
+    def with_translations(self):
         return self.prefetch_related(
             models.Prefetch('related_objects'),
             models.Prefetch('related_subjects')
         )
- 
-        # return self.annotate(translation_ids=models.Subquery(
-        #     self.model.objects.filter(
-        #         Q(source__translated_id=models.OuterRef('pk')) | 
-        #         Q(translated__source_id=models.OuterRef('pk'))
-        #     ).values('id'),
-        #     output_field=models.QuerySet()
-        # ))
-        
-        # return self.model.objects.prefetch_related(models.Prefetch(''))
 
 
 class EntryManager(models.Manager):
@@ -37,43 +26,7 @@ class EntryManager(models.Manager):
         return EntryQuerySet(self.model, using=self._db)
 
     def save(self, entry):
-        from lang.dictionary.models.relation import Relation, RELATION_KIND_TRANSLATION
-
-        q = Q()
-        for translation in entry._remove_translations:
-            q |= Q(object=entry, subject=translation, kind=RELATION_KIND_TRANSLATION) | Q(object=translation, subject=entry, kind=RELATION_KIND_TRANSLATION)
-
-        if q:
-            Relation.objects.filter(q).delete()
-
-        entry.save()
-        for translation in entry.translations:
-            translation.save()
-        
-        for recording in entry._add_recordings:
-            recording.save()
-
-        for translation in entry._add_translations:
-            translation.save()
-            for example in translation._add_examples:
-                self.save(example.example.object)
-                self.save(example.example.subject)
-                # example.example.object.save()
-                # example.example.subject.save()
-                example.example.save()
-                example.save()
-
-            # Translation.create(source=entry, translated=translation).save()
-
-        # for example in entry._add_examples:
-        #     example.save()
-            # Example.create(entry=entry, example=example).save()
-
-        entry._add_translations = []
-        entry._add_examples = []
-        entry._add_recordings = []
-        # entry._remove_examples = []
-        entry._remove_translations = []
+        pass
 
     def delete(self, entry_id):
         self.get_queryset().filter(id=entry_id).delete()
@@ -100,15 +53,11 @@ class EntryManager(models.Manager):
 
         return qs.order_by('text')
 
-    # def delete_entry_with_translations(self, entry_id):
-    #     self.get_queryset().filter(Q(source__translated_id=entry_id) | Q(translated__source_id=entry_id)).delete()
-    #     self.get_queryset().filter(id=entry_id).delete()
-
     def delete_entry(self, entry_id):
         self.get_queryset().filter(id=entry_id).delete()
 
 
-class EntryData(models.Model):
+class EntryModel(models.Model):
     id = models.UUIDField(primary_key=True)
     text = models.CharField(max_length=255)
     language = models.CharField(max_length=2, choices=LANGUAGES)
@@ -120,76 +69,29 @@ class EntryData(models.Model):
     class Meta:
         db_table = 'dictionary_entry'
         unique_together = (('text', 'language'),)
-    
-    def __init__(self, *args, **kwargs):
-        super(EntryData, self).__init__(*args, **kwargs)
 
-        self._add_translations = []
-        self._remove_translations = []
-        self._add_recordings = []
-        # self._add_examples = []
-        # self._remove_examples = []
+    @property
+    def translated_entries(self):
+        from lang.dictionary.models import Entry
+        return Entry.objects.filter(Q(related_subjects__subject=self) | Q(related_objects__object=self))
 
     @property
     def translations(self):
-        from lang.dictionary.db.relation import RELATION_KIND_TRANSLATION
-        return ([t.subject for t in self.related_subjects.filter(kind=RELATION_KIND_TRANSLATION)] +
-                [t.object for t in self.related_objects.filter(kind=RELATION_KIND_TRANSLATION)] +
-                [t.subject for t in self._add_translations])
+        from lang.dictionary.models import Translation
+        return Translation.objects.filter(Q(subject=self) | Q(object=self))
 
     def get_examples(self, entry):
-        from lang.dictionary.db.relation import RELATION_KIND_TRANSLATION
-        translations = ([t for t in self.related_subjects.filter(subject=entry, kind=RELATION_KIND_TRANSLATION)] +
-                        [t for t in self.related_objects.filter(object=entry, kind=RELATION_KIND_TRANSLATION)] +
-                        [t for t in self._add_translations if t.subject == entry])
-
-        examples = set()
-        for t in translations:
-            examples.update((e.example for e in t.relation_examples.all()))
-
-        return examples
+        from lang.dictionary.models import Example
+        return Example.objects.filter(
+            (Q(example_translations__translation__object=entry) & Q(example_translations__translation__subject=self)) |
+            (Q(example_translations__translation__object=self) & Q(example_translations__translation__subject=entry)))
 
     def get_translation(self, entry):
-        from lang.dictionary.db.relation import RELATION_KIND_TRANSLATION
-        translations = ([t for t in self.related_subjects.filter(kind=RELATION_KIND_TRANSLATION) if t.subject == entry] +
-                        [t for t in self.related_objects.filter(kind=RELATION_KIND_TRANSLATION) if t.object == entry] +
-                        [t for t in self._add_translations if t.subject == entry])
-        if translations:
-            return translations[0]
+        from lang.dictionary.models import Translation
+        return Translation.objects.filter(
+            (Q(object=self) & Q(subject=entry)) | (Q(object=entry) & Q(subject=self))).first()
 
-        return None
-
-    def add_translation(self, entry):
-        from lang.dictionary.models.relation import Relation, RELATION_KIND_TRANSLATION
-        translation = Relation.create(object=self, subject=entry, kind=RELATION_KIND_TRANSLATION)
-        self._add_translations.append(translation)
-        return translation
-
-    def remove_translation(self, entry):
-        self._remove_translations.append(entry)
-
-    # def get_examples(self, relation):
-    #     self.entry_examples.filter(relation=relation).all()
-    #
-    # def add_example(self, relation, text, translation):
-    #     # if self.has_example(entry):
-    #     #     raise Exception("Example already exists")
-    #
-    #     from lang.dictionary.models import Example
-    #     self._add_examples.append(Example.create(relation=relation, text=text, translation=translation))
-
-    # def has_example(self, entry):
-    #     return any([e for e in self.examples
-    #                 if e.text == entry.text and e.language == entry.language])
-
-    def add_recording(self, recording):
-        self._add_recordings.append(recording)
-
-
-class EntryRecordingData(models.Model):
-    id = models.UUIDField(primary_key=True)
-    entry = models.ForeignKey('lang.Entry', on_delete=models.CASCADE, related_name='recordings')
-    url = models.CharField(max_length=255)
-
-    class Meta:
-        db_table = 'dictionary_entry_recording'
+    def has_translation(self, entry):
+        from lang.dictionary.models import Translation
+        return Translation.objects.filter(
+            (Q(object=self) & Q(subject=entry)) | (Q(object=entry) & Q(subject=self))).exists()
