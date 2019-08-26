@@ -1,21 +1,18 @@
 from django import forms
-from django.shortcuts import redirect
 
+from lang.common.component import ComponentView
 from lang.dictionary.controllers.add_entries import AddEntries
 from lang.dictionary.controllers.translate_entry import TranslateEntry
-from lang.dictionary.views.base import PageView
-from lang.dictionary.views.current_date import CurrentDateView
 
 
 class TranslateEntryForm(forms.Form):
     q = forms.CharField(max_length=255)
 
 
-class TranslateEntryView(PageView):
+class TranslateEntryView(ComponentView):
     fragment_id = 'translate-entry'
     page_template = 'dictionary/pages/translate_entry.html'
     fragment_template = 'dictionary/fragments/translate_entry.html'
-    component_classes = [CurrentDateView]
     translate_entry_controller = TranslateEntry()
 
     def get(self, request, *args, **kwargs):
@@ -36,10 +33,9 @@ class TranslateEntryView(PageView):
         return self.render(context, **kwargs)
 
 
-class AddEntryTranslationsView(PageView):
+class AddEntryTranslationsView(ComponentView):
     fragment_id = 'translate-entry'
     fragment_template = 'dictionary/fragments/entry_list.html'
-    component_classes = [CurrentDateView]
     add_entries_controller = AddEntries()
     
     def post(self, request, *args, **kwargs):

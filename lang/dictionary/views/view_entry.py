@@ -1,8 +1,8 @@
-from lang.common.component import ComponentView2
+from lang.common.component import ComponentView
 from lang.dictionary.controllers.view_entry import ViewEntry as ViewEntryController
 
 
-class ViewEntry(ComponentView2):
+class ViewEntry(ComponentView):
     page_template = 'dictionary/pages/view_entry.html'
     view_entry_controller = ViewEntryController()
 

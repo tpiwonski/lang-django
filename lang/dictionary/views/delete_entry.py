@@ -1,10 +1,9 @@
+from lang.common.component import ComponentView
 from lang.dictionary.controllers.delete_entry import DeleteEntry
-from lang.dictionary.views.base import PageView
 
 
-class DeleteEntryView(PageView):
+class DeleteEntryView(ComponentView):
     fragment_template = 'dictionary/fragments/entry_deleted.html'
-    # context_classes = [BaseContext]
     delete_entry_controller = DeleteEntry()
 
     def post(self, request, entry_id, *args, **kwargs):

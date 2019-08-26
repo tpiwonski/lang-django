@@ -1,9 +1,7 @@
 from django import forms
 
-from lang.common.component import ComponentView2
+from lang.common.component import ComponentView
 from lang.dictionary.controllers.search_entries import SearchEntries
-from lang.dictionary.views.base import PageView
-from lang.dictionary.views.current_date import CurrentDateView
 
 
 class SearchEntriesForm(forms.Form):
@@ -64,7 +62,7 @@ class SearchEntriesForm(forms.Form):
         # return HttpResponse(json.dumps(content), content_type="application/json")
 
 
-class SearchEntriesView(ComponentView2):
+class SearchEntriesView(ComponentView):
     fragment_id = 'search-entries'
     page_template = 'dictionary/pages/search_entries.html'
     fragment_template = 'dictionary/fragments/search_entries.html'

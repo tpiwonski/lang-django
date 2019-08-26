@@ -1,9 +1,9 @@
 from django import forms
 from django.shortcuts import redirect
 
+from lang.common.component import ComponentView
 from lang.dictionary.controllers.add_entry import AddEntry
 from lang.dictionary.db.entry import LANGUAGES, LANGUAGE_EN, LANGUAGE_PL
-from lang.dictionary.views.base import PageView
 
 
 class EntryForm(forms.Form):
@@ -43,7 +43,7 @@ class TranslationFormSet(forms.BaseFormSet):
 TranslationFormSet = forms.formset_factory(TranslationForm, formset=TranslationFormSet, can_delete=True, extra=0)
 
 
-class AddEntryView(PageView):
+class AddEntryView(ComponentView):
     page_template = 'dictionary/pages/add_entry.html'
     add_entry_controller = AddEntry()
 

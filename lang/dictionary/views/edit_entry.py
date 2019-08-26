@@ -1,10 +1,10 @@
 from django import forms
 from django.shortcuts import redirect
 
+from lang.common.component import ComponentView
 from lang.dictionary.controllers.edit_entry import EditEntry
 from lang.dictionary.controllers.get_entry import GetEntry
 from lang.dictionary.db.entry import LANGUAGES
-from lang.dictionary.views.base import PageView
 
 
 class EntryForm(forms.Form):
@@ -38,7 +38,7 @@ class TranslationFormSet(forms.BaseFormSet):
 TranslationFormSet = forms.formset_factory(TranslationForm, formset=TranslationFormSet, extra=0, can_delete=True)
 
 
-class EditEntryView(PageView):
+class EditEntryView(ComponentView):
     page_template = 'dictionary/pages/edit_entry.html'
     fragment_template = 'dictionary/fragments/entry_deleted.html'
     get_entry_controller = GetEntry()

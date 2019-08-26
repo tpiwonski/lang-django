@@ -1,6 +1,6 @@
 from django.urls import path, include, re_path
 
-from lang.dictionary.views import current_date, entry_list, view_entry, add_entry, edit_entry, translate_entry, search_entries, delete_entry
+from lang.dictionary.views import entry_list, view_entry, add_entry, edit_entry, translate_entry, search_entries, delete_entry
 
 urlpatterns = [
     re_path(r'entries/(?P<entry_id>[^/]+)/$', view_entry.ViewEntry.as_view(), name='entry-view'),
@@ -13,6 +13,6 @@ urlpatterns = [
     re_path(r'translate-entry/$', translate_entry.TranslateEntryView.as_view(), name='translate-entry'),
     re_path(r'add-entries/$', translate_entry.AddEntryTranslationsView.as_view(), name='add-entries'),
     # re_path(r'delete-entries/$', translate_entry.DeleteEntriesView.as_view(), name='delete-entries'),
-    re_path(r'current-date/$', current_date.CurrentDateView.as_view(), name='current-date'),
+    # re_path(r'current-date/$', current_date.CurrentDateView.as_view(), name='current-date'),
     re_path(r'$', search_entries.SearchEntriesView.as_view(), name='search-entries'),
 ]
