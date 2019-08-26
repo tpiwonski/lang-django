@@ -1,0 +1,6 @@
+{% load entry_list_item %}
+<div id="entry-list">
+{% for entry in entries %}
+    {% entry_list_item entry %}
+{% endfor %}
+</div>

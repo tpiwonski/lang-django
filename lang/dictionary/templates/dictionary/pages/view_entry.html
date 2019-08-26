@@ -1,10 +1,12 @@
 {% extends "dictionary/base.html" %}
+{% load view_entry %}
 {% block body %}
 {{ block.super }}
-{% if entry.id %}
-    {% include "dictionary/fragments/view_entry.html" with entry=entry %}
-{% else %}
-    <div>Entry does not exist</div>
-{% endif %}
+<!--{% if entry.id %}-->
+<!--    {% include "dictionary/fragments/view_entry.html" with entry=entry %}-->
+<!--{% else %}-->
+<!--    <div>Entry does not exist</div>-->
+<!--{% endif %}-->
+{% view_entry entry %}
 {% comment %} <a href="{% url 'edit-entry' entry_id=entry.id %}">Edit</a> {% endcomment %}
 {% endblock body %}
