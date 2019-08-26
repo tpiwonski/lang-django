@@ -1,2 +1,2 @@
-from lang.dictionary.models import Entry, Translation, Example
-from lang.repetitions.models import Repetition, RepeatedEntry
+from lang.dictionary.models import *
+from lang.repetitions.models import *

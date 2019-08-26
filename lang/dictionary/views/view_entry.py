@@ -1,14 +1,14 @@
-from lang.dictionary.controllers import GetEntry
-from lang.dictionary.views.base import PageView
+from lang.common.component import ComponentView2
+from lang.dictionary.controllers.view_entry import ViewEntry as ViewEntryController
 
 
-class EntryView(PageView):
+class ViewEntry(ComponentView2):
     page_template = 'dictionary/pages/view_entry.html'
-    get_entry_controller = GetEntry()
+    view_entry_controller = ViewEntryController()
 
     def get(self, request, entry_id, *args, **kwargs):
-        entry = self.get_entry_controller.execute(entry_id)
+        entry = self.view_entry_controller.execute(entry_id)
         context = {
             'entry': entry
         }
-        return self.render_page(context, **kwargs)
+        return self.render(context, **kwargs)

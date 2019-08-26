@@ -15,10 +15,12 @@
             <ul>
             {% for translation in entry.translations %}
                 <li>
-                    <input type="checkbox" name="translation.{{ forloop.parentloop.counter0 }}.{{ forloop.counter0 }}.add" value="1" checked>
-                    <span>{{ translation.text }}</span>
-                    <input type="hidden" name="translation.{{ forloop.parentloop.counter0 }}.{{ forloop.counter0 }}.text" value="{{ translation.text }}">
-                    <input type="hidden" name="translation.{{ forloop.parentloop.counter0 }}.{{ forloop.counter0 }}.language" value="{{ translation.language }}">
+                    {% for translation_entry in translation.entries %}
+                        <input type="checkbox" name="translation.{{ forloop.parentloop.parentloop.counter0 }}.{{ forloop.parentloop.counter0 }}.{{ forloop.counter0 }}.add" value="1" checked>
+                        <span>{{ translation_entry.text }}</span>
+                        <input type="hidden" name="translation.{{ forloop.parentloop.parentloop.counter0 }}.{{ forloop.parentloop.counter0 }}.{{ forloop.counter0 }}.text" value="{{ translation_entry.text }}">
+                        <input type="hidden" name="translation.{{ forloop.parentloop.parentloop.counter0 }}.{{ forloop.parentloop.counter0 }}.{{ forloop.counter0 }}.language" value="{{ translation.language }}">
+                    {% endfor %}
                     <ul>
                     {% for example in translation.examples %}
                         <li>

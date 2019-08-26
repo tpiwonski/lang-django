@@ -1,13 +1,16 @@
 import uuid
 
-from lang.dictionary.db.example import ExampleData
+from lang.dictionary.db.example import ExampleModel
 
 
-class Example(ExampleData):
+class Example(ExampleModel):
 
     class Meta:
         proxy = True
 
+    def __str__(self):
+        return "{} - {}".format(self.subject, self.object)
+
     @staticmethod
-    def create(entry, example):
-        return Example(id=uuid.uuid4(), entry=entry, example=example)
+    def create(entry, translation):
+        return Example.objects.create(id=uuid.uuid4(), object=entry, subject=translation)

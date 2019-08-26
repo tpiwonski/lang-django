@@ -1,4 +1,5 @@
 {% load widget_tweaks %}
+{% load entry_list %}
 <div id="search-entries" ic-on-beforeTrigger="onBeforePost(evt, elt)">
     <form class="needs-validation" novalidate method="get"
         ic-get-from="{% url 'search-entries' %}"  
@@ -14,9 +15,7 @@
     <div id="indicator" class="spinner-border spinner-border-sm" role="status" style="display:none">
         <span class="sr-only">Loading...</span>
     </div>
-    {% if entries %}
-        {% include 'dictionary/fragments/entry_list.html' with entries=entries %}
-    {% endif %}
+    {% entry_list entries %}
 </div>
 <script>
 function onBeforePost(evt, elt) {

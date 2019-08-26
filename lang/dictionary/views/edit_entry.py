@@ -1,11 +1,10 @@
 from django import forms
-from django.shortcuts import redirect, render
-from django.contrib import messages
+from django.shortcuts import redirect
 
-from lang.common.component import ComponentView
-from lang.dictionary.controllers import GetEntry, EditEntry
+from lang.dictionary.controllers.edit_entry import EditEntry
+from lang.dictionary.controllers.get_entry import GetEntry
 from lang.dictionary.db.entry import LANGUAGES
-from lang.dictionary.views.base import BaseContext, PageView
+from lang.dictionary.views.base import PageView
 
 
 class EntryForm(forms.Form):
@@ -53,14 +52,14 @@ class EditEntryView(PageView):
         context = {
             'entry': entry,
             'entry_form': EntryForm(entry),
-            'translation_forms': TranslationFormSet(initial=entry['translations'])
+            'translation_forms': TranslationFormSet(initial=entry['translated_entries'])
         }
         return self.render(context, **kwargs)
 
     def post(self, request, entry_id, *args, **kwargs):
         entry = self.get_entry_controller.execute(entry_id)
         entry_form = EntryForm(request.POST)
-        translation_forms = TranslationFormSet(request.POST, initial=entry['translations'])
+        translation_forms = TranslationFormSet(request.POST, initial=entry['translated_entries'])
         valid_entry = entry_form.is_valid()
         valid_translations = translation_forms.is_valid()
         if not valid_entry or not valid_translations:
