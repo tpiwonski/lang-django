@@ -11,6 +11,26 @@ LANGUAGES = (
 )
 
 
+POS_NOUN = 'no'
+POS_ADVERB = 'av'
+POS_ADJECTIVE = 'aj'
+POS_PRONOUN = 'pn'
+POS_VERB = 've'
+POS_PREPOSITION = 'pp'
+POS_CONJUNCTION = 'cj'
+
+
+PARTS_OF_SPEECH = (
+    (POS_NOUN, 'noun'),
+    (POS_ADVERB, 'adverb'),
+    (POS_ADJECTIVE, 'adjective'),
+    (POS_VERB, 'verb'),
+    (POS_PRONOUN, 'pronoun'),
+    (POS_PREPOSITION, 'preposition'),
+    (POS_CONJUNCTION, 'conjunction')
+)
+
+
 class EntryQuerySet(models.QuerySet):
 
     def with_translations(self):
@@ -86,10 +106,11 @@ class EntryModel(models.Model):
             (Q(example_translations__translation__object=entry) & Q(example_translations__translation__subject=self)) |
             (Q(example_translations__translation__object=self) & Q(example_translations__translation__subject=entry)))
 
-    def get_translation(self, entry):
+    def get_translation(self, entry, part_of_speech):
         from lang.dictionary.models import Translation
         return Translation.objects.filter(
-            (Q(object=self) & Q(subject=entry)) | (Q(object=entry) & Q(subject=self))).first()
+            Q(part_of_speech=part_of_speech) &
+            ((Q(object=self) & Q(subject=entry)) | (Q(object=entry) & Q(subject=self)))).first()
 
     def has_translation(self, entry):
         from lang.dictionary.models import Translation

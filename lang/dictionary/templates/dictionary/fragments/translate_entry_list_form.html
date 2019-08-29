@@ -20,6 +20,7 @@
                         <span>{{ translation_entry.text }}</span>
                         <input type="hidden" name="translation.{{ forloop.parentloop.parentloop.counter0 }}.{{ forloop.parentloop.counter0 }}.{{ forloop.counter0 }}.text" value="{{ translation_entry.text }}">
                         <input type="hidden" name="translation.{{ forloop.parentloop.parentloop.counter0 }}.{{ forloop.parentloop.counter0 }}.{{ forloop.counter0 }}.language" value="{{ translation.language }}">
+                        <input type="hidden" name="translation.{{ forloop.parentloop.parentloop.counter0 }}.{{ forloop.parentloop.counter0 }}.{{ forloop.counter0 }}.part_of_speech" value="{{ translation.part_of_speech }}">
                     {% endfor %}
                     <ul>
                     {% for example in translation.examples %}

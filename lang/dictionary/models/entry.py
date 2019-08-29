@@ -18,7 +18,7 @@ class Entry(EntryModel):
     def create(text, language):
         return Entry.objects.create(id=uuid.uuid4(), text=text, language=language)
 
-    def add_translation(self, entry):
+    def add_translation(self, entry, part_of_speech):
         if self.has_translation(entry):
             raise Exception("Translation already exists")
 

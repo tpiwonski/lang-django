@@ -23,9 +23,9 @@ class AddEntries(object):
                     translation = Entry.create(translation_data['text'], translation_data['language'])
 
                 # if not entry.has_translation(translation):
-                relation = entry.get_translation(translation)
+                relation = entry.get_translation(translation, translation_data['part_of_speech'])
                 if not relation:
-                    relation = entry.add_translation(translation)
+                    relation = entry.add_translation(translation, translation_data['part_of_speech'])
 
                 for example_data in translation_data.get('examples', []):
                     example = self.example_repository.get_by_text(example_data['text'])
