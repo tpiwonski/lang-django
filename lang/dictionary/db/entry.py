@@ -11,6 +11,39 @@ LANGUAGES = (
 )
 
 
+ENTRY_TYPE_UNKNOWN = 0
+ENTRY_TYPE_NOUN = 1
+ENTRY_TYPE_ADVERB = 2
+ENTRY_TYPE_ADJECTIVE = 3
+ENTRY_TYPE_PRONOUN = 4
+ENTRY_TYPE_VERB = 5
+ENTRY_TYPE_PREPOSITION = 6
+ENTRY_TYPE_CONJUNCTION = 7
+ENTRY_TYPE_INTERJECTION = 8
+ENTRY_TYPE_IDIOM = 9
+ENTRY_TYPE_PHRASAL_VERB = 10
+ENTRY_TYPE_PREFIX = 11
+ENTRY_TYPE_PHRASE = 12
+ENTRY_TYPE_SENTENCE = 13
+
+ENTRY_TYPES = (
+    (ENTRY_TYPE_UNKNOWN, 'unknown'),
+    (ENTRY_TYPE_NOUN, 'noun'),
+    (ENTRY_TYPE_ADVERB, 'adverb'),
+    (ENTRY_TYPE_ADJECTIVE, 'adjective'),
+    (ENTRY_TYPE_VERB, 'verb'),
+    (ENTRY_TYPE_PRONOUN, 'pronoun'),
+    (ENTRY_TYPE_PREPOSITION, 'preposition'),
+    (ENTRY_TYPE_CONJUNCTION, 'conjunction'),
+    (ENTRY_TYPE_INTERJECTION, 'interjection'),
+    (ENTRY_TYPE_IDIOM, 'idiom'),
+    (ENTRY_TYPE_PHRASAL_VERB, 'phrasal verb'),
+    (ENTRY_TYPE_PREFIX, 'prefix'),
+    (ENTRY_TYPE_PHRASE, 'phrase'),
+    (ENTRY_TYPE_SENTENCE, 'sentence'),
+)
+
+
 class EntryQuerySet(models.QuerySet):
 
     def with_translations(self):
@@ -37,9 +70,9 @@ class EntryManager(models.Manager):
         except ObjectDoesNotExist as ex:
             return None
 
-    def get_by_text(self, text, language):
+    def get_by_text(self, text, language, entry_type):
         try:
-            return self.get_queryset().with_translations().get(text=text, language=language)
+            return self.get_queryset().with_translations().get(text=text, language=language, type=entry_type)
         except ObjectDoesNotExist as ex:
             return None
 
@@ -61,6 +94,7 @@ class EntryModel(models.Model):
     id = models.UUIDField(primary_key=True)
     text = models.CharField(max_length=255)
     language = models.CharField(max_length=2, choices=LANGUAGES)
+    type = models.PositiveSmallIntegerField(choices=ENTRY_TYPES, default=0)
     created_at = models.DateTimeField(auto_now_add=True) 
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -68,7 +102,7 @@ class EntryModel(models.Model):
 
     class Meta:
         db_table = 'dictionary_entry'
-        unique_together = (('text', 'language'),)
+        unique_together = (('text', 'language', 'type'),)
 
     @property
     def translated_entries(self):
@@ -89,7 +123,7 @@ class EntryModel(models.Model):
     def get_translation(self, entry):
         from lang.dictionary.models import Translation
         return Translation.objects.filter(
-            (Q(object=self) & Q(subject=entry)) | (Q(object=entry) & Q(subject=self))).first()
+            ((Q(object=self) & Q(subject=entry)) | (Q(object=entry) & Q(subject=self)))).first()
 
     def has_translation(self, entry):
         from lang.dictionary.models import Translation

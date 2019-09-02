@@ -1,5 +1,6 @@
 from django.db import transaction
 
+from lang.dictionary.db.entry import ENTRY_TYPE_SENTENCE
 from lang.dictionary.models import Entry, Example
 from lang.dictionary.serializers import ViewEntryOutput
 
@@ -12,15 +13,15 @@ class AddEntries(object):
     def execute(self, results):
         entries = []
         for entry_data in results:
-            entry = self.entry_repository.get_by_text(entry_data['text'], entry_data['language'])
+            entry = self.entry_repository.get_by_text(entry_data['text'], entry_data['language'], entry_data['type'])
             if not entry:
-                entry = Entry.create(entry_data['text'], entry_data['language'])
+                entry = Entry.create(entry_data['text'], entry_data['language'], entry_data['type'])
                 # entry.add_recordings(entry_data['recordings'])
 
             for translation_data in entry_data['translations']:
-                translation = self.entry_repository.get_by_text(translation_data['text'], translation_data['language'])
+                translation = self.entry_repository.get_by_text(translation_data['text'], translation_data['language'], translation_data['type'])
                 if not translation:
-                    translation = Entry.create(translation_data['text'], translation_data['language'])
+                    translation = Entry.create(translation_data['text'], translation_data['language'], translation_data['type'])
 
                 # if not entry.has_translation(translation):
                 relation = entry.get_translation(translation)
@@ -31,13 +32,13 @@ class AddEntries(object):
                     example = self.example_repository.get_by_text(example_data['text'])
                     if not example:
 
-                        example_entry = self.entry_repository.get_by_text(example_data['text'], entry_data['language'])
+                        example_entry = self.entry_repository.get_by_text(example_data['text'], entry_data['language'], ENTRY_TYPE_SENTENCE)
                         if not example_entry:
-                            example_entry = Entry.create(example_data['text'], entry_data['language'])
+                            example_entry = Entry.create(example_data['text'], entry_data['language'], ENTRY_TYPE_SENTENCE)
 
-                        example_translation = self.entry_repository.get_by_text(example_data['translation'], translation_data['language'])
+                        example_translation = self.entry_repository.get_by_text(example_data['translation'], translation_data['language'], ENTRY_TYPE_SENTENCE)
                         if not example_translation:
-                            example_translation = Entry.create(example_data['translation'], translation_data['language'])
+                            example_translation = Entry.create(example_data['translation'], translation_data['language'], ENTRY_TYPE_SENTENCE)
 
                         example_relation = example_entry.get_translation(example_translation)
                         if not example_relation:

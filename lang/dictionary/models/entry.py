@@ -15,8 +15,8 @@ class Entry(EntryModel):
         return "{}".format(self.text)
 
     @staticmethod
-    def create(text, language):
-        return Entry.objects.create(id=uuid.uuid4(), text=text, language=language)
+    def create(text, language, entry_type):
+        return Entry.objects.create(id=uuid.uuid4(), text=text, language=language, type=entry_type)
 
     def add_translation(self, entry):
         if self.has_translation(entry):

@@ -62,6 +62,7 @@ class AddEntryTranslationsView(ComponentView):
                             translations.append({
                                 'text': translation_entry['text'],
                                 'language': translation_entry['language'],
+                                'type': translation_entry['type'],
                                 'examples': [example for example in translation.get('examples', {}).values()]
                             })
 
@@ -69,6 +70,7 @@ class AddEntryTranslationsView(ComponentView):
                     entries.append({
                         'text': entry['text'],
                         'language': entry['language'],
+                        'type': entry['type'],
                         'translations': translations
                     })
 
