@@ -34,7 +34,6 @@ class TranslationService(object):
         entry_language, translation_language = result['dictionary']
         entries_by_type = {}
         for entry in result['entries']:
-            translations = []
             for meaning in entry['meanings']:
 
                 et = ENTRY_TYPES_MAP.get(meaning.get('part_of_speech'), ENTRY_TYPE_UNKNOWN)
@@ -54,11 +53,4 @@ class TranslationService(object):
                     'type': et
                 })
 
-            # entries.append({
-            #     'text': entry['text'],
-            #     'language': entry_language,
-            #     'translations': translations,
-            #     'recordings': entry['recordings']
-            # })
-
-        return entries_by_type.values()
+        return list(entries_by_type.values())

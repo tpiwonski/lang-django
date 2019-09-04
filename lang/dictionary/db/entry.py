@@ -129,3 +129,7 @@ class EntryModel(models.Model):
         from lang.dictionary.models import Translation
         return Translation.objects.filter(
             (Q(object=self) & Q(subject=entry)) | (Q(object=entry) & Q(subject=self))).exists()
+
+    def has_recording(self, url):
+        from lang.dictionary.models import Recording
+        return Recording.objects.filter(entry=self, url=url).exists()

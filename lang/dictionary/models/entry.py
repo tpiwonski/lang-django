@@ -3,6 +3,7 @@ import uuid
 from django.db.models import Q
 
 from lang.dictionary.db.entry import EntryModel
+from lang.dictionary.models.recording import Recording
 from lang.dictionary.models.translation import Translation
 
 
@@ -27,3 +28,6 @@ class Entry(EntryModel):
 
     def remove_translation(self, entry):
         Translation.object.filter(Q(object=self, subject=entry) | Q(object=entry, subject=self)).delete()
+
+    def add_recording(self, url):
+        return Recording.create(self, url)
