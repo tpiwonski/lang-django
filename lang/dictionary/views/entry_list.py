@@ -1,8 +1,8 @@
+from lang.common.component import ComponentView
 from lang.dictionary.controllers.view_all_entries import ViewAllEntries as ViewAllEntriesController
-from lang.dictionary.views.base import PageView
 
 
-class ViewAllEntries(PageView):
+class ViewAllEntries(ComponentView):
     page_template = 'dictionary/pages/view_all_entries.html'
     get_all_entries_controller = ViewAllEntriesController()
 

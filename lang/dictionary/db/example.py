@@ -2,12 +2,16 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 from django.db.models import Q
 
+from lang.dictionary.db.entry import ENTRY_TYPE_SENTENCE
+
 
 class ExampleManager(models.Manager):
 
     def get_by_text(self, text):
         try:
-            return self.get_queryset().get(Q(object__text=text) | Q(subject__text=text))
+            return self.get_queryset().get(
+                (Q(object__text=text) & Q(object__type=ENTRY_TYPE_SENTENCE)) |
+                (Q(subject__text=text) & Q(subject__type=ENTRY_TYPE_SENTENCE)))
         except ObjectDoesNotExist:
             return None
 
