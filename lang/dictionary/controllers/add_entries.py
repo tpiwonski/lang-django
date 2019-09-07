@@ -1,3 +1,5 @@
+import itertools
+
 from django.db import transaction
 
 from lang.dictionary.db.entry import ENTRY_TYPE_SENTENCE
@@ -23,10 +25,13 @@ class AddEntries(object):
                     entry.add_recording(entry_recording_data['url'])
 
             for translation_data in entry_data['translations']:
+                synonyms = []
                 for translation_entry in translation_data['entries']:
                     translation = self.entry_repository.get_by_text(translation_entry['text'], translation_data['language'], translation_data['type'])
                     if not translation:
                         translation = Entry.create(translation_entry['text'], translation_data['language'], translation_data['type'])
+
+                    synonyms.append(translation)
 
                     relation = entry.get_translation(translation)
                     if not relation:
@@ -59,6 +64,10 @@ class AddEntries(object):
 
                         if not relation.has_example(example):
                             relation.add_example(example)
+
+                for i, k in itertools.combinations(synonyms, 2):
+                    if not i.has_synonym(k):
+                        i.add_synonym(k)
 
             entries.append(entry)
 

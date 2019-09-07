@@ -3,8 +3,10 @@ from django.db import models
 
 class TranslationModel(models.Model):
     id = models.UUIDField(primary_key=True)
-    object = models.ForeignKey('lang.Entry', on_delete=models.CASCADE, related_name='related_subjects')
-    subject = models.ForeignKey('lang.Entry', on_delete=models.CASCADE, related_name='related_objects')
+    object = models.ForeignKey('lang.Entry', on_delete=models.CASCADE, related_name='translation_subjects')
+    subject = models.ForeignKey('lang.Entry', on_delete=models.CASCADE, related_name='translation_objects')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         db_table = 'dictionary_translation'
