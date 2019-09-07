@@ -1,3 +1,5 @@
+import json
+
 from django import forms
 
 from lang.common.component import ComponentView
@@ -27,7 +29,8 @@ class TranslateEntryView(ComponentView):
         if text:
             entries = self.translate_entry_controller.execute(text)
             context.update({
-                'entries': entries
+                'entries': entries,
+                'payload': json.dumps(entries)
             })
 
         return self.render(context, **kwargs)
@@ -39,6 +42,7 @@ class AddEntryTranslationsView(ComponentView):
     add_entries_controller = AddEntries()
     
     def post(self, request, *args, **kwargs):
+        payload = json.loads(request.POST.get('payload'))
         data = {}
         for key, value in request.POST.items():
             if key.startswith('entry.'):
@@ -46,33 +50,30 @@ class AddEntryTranslationsView(ComponentView):
                 data.setdefault(entry_no, {})[entry_prop] = value
             elif key.startswith('translation.'):
                 _, entry_no, translation_no, translation_entry_no, translation_prop = key.split('.')
-                data.setdefault(entry_no, {}).setdefault('translations', {}).setdefault(translation_no, {}).setdefault('entries', {}).setdefault(translation_entry_no, {}).setdefault('entry', {})[translation_prop] = value
+                data.setdefault(entry_no, {}).setdefault('translations', {}).setdefault(translation_no, {}).setdefault(
+                    'entries', {}).setdefault(translation_entry_no, {}).setdefault('entry', {})[
+                    translation_prop] = value
             elif key.startswith('example.'):
                 _, entry_no, translation_no, example_no, example_prop = key.split('.')
-                data.setdefault(entry_no, {}).setdefault('translations', {}).setdefault(translation_no, {}).setdefault('examples', {}).setdefault(example_no, {})[example_prop] = value
+                data.setdefault(entry_no, {}).setdefault('translations', {}).setdefault(translation_no, {}).setdefault(
+                    'examples', {}).setdefault(example_no, {})[example_prop] = value
 
         entries = []
-        for entry in data.values():
-            if 'add' in entry:
-                translations = []
-                for translation in entry['translations'].values():
-                    for translation_entry in translation['entries'].values():
-                        translation_entry = translation_entry['entry']
-                        if 'add' in translation_entry:
-                            translations.append({
-                                'text': translation_entry['text'],
-                                'language': translation_entry['language'],
-                                'type': translation_entry['type'],
-                                'examples': [example for example in translation.get('examples', {}).values()]
-                            })
+        for entry_no, entry in data.items():
+            if 'add' not in entry:
+                continue
 
-                if translations:
-                    entries.append({
-                        'text': entry['text'],
-                        'language': entry['language'],
-                        'type': entry['type'],
-                        'translations': translations
-                    })
+            translations = []
+            for translation_no, translation in entry['translations'].items():
+                for translation_entry_no, translation_entry in translation['entries'].items():
+                    translation_entry = translation_entry['entry']
+                    if 'add' in translation_entry:
+                        translations.append(payload[int(entry_no)]['translations'][int(translation_no)])
+
+            if translations:
+                entry = payload[int(entry_no)]
+                entry['translations'] = translations
+                entries.append(entry)
 
         entries = self.add_entries_controller.execute(entries)
         context = {

@@ -4,14 +4,13 @@
           ic-indicator="#indicator"
     >
         {% csrf_token %}
+        <input type="hidden" name="payload" value="{{ payload }}">
         {% for entry in entries %}
         <div>
             <div>
                 <input type="checkbox" name="entry.{{ forloop.counter0 }}.add" value="1" checked>
                 <span>{{ entry.text }}</span>
                 <input type="hidden" name="entry.{{ forloop.counter0 }}.text" value="{{ entry.text }}">
-                <input type="hidden" name="entry.{{ forloop.counter0 }}.language" value="{{ entry.language }}">
-                <input type="hidden" name="entry.{{ forloop.counter0 }}.type" value="{{ entry.type|default_if_none:'' }}">
             </div>
             <ul>
             {% for translation in entry.translations %}
@@ -20,15 +19,11 @@
                         <input type="checkbox" name="translation.{{ forloop.parentloop.parentloop.counter0 }}.{{ forloop.parentloop.counter0 }}.{{ forloop.counter0 }}.add" value="1" checked>
                         <span>{{ translation_entry.text }}</span>
                         <input type="hidden" name="translation.{{ forloop.parentloop.parentloop.counter0 }}.{{ forloop.parentloop.counter0 }}.{{ forloop.counter0 }}.text" value="{{ translation_entry.text }}">
-                        <input type="hidden" name="translation.{{ forloop.parentloop.parentloop.counter0 }}.{{ forloop.parentloop.counter0 }}.{{ forloop.counter0 }}.language" value="{{ translation.language }}">
-                        <input type="hidden" name="translation.{{ forloop.parentloop.parentloop.counter0 }}.{{ forloop.parentloop.counter0 }}.{{ forloop.counter0 }}.type" value="{{ translation.type|default_if_none:'' }}">
                     {% endfor %}
                     <ul>
                     {% for example in translation.examples %}
                         <li>
                             <span>{{ example.text }} - {{ example.translation }}</span>
-                            <input type="hidden" name="example.{{ forloop.parentloop.parentloop.counter0 }}.{{ forloop.parentloop.counter0 }}.{{ forloop.counter0 }}.text" value="{{ example.text }}">
-                            <input type="hidden" name="example.{{ forloop.parentloop.parentloop.counter0 }}.{{ forloop.parentloop.counter0 }}.{{ forloop.counter0 }}.translation" value="{{ example.translation }}">
                         </li>
                     {% endfor %}
                     </ul>
