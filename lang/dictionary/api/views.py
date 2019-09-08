@@ -4,7 +4,7 @@ from lang.dictionary.controllers.add_entry import AddEntry
 from lang.dictionary.controllers.get_all_entries import GetAllEntries
 from lang.dictionary.controllers.get_entry import GetEntry
 from lang.dictionary.controllers.search_entries import SearchEntries
-from lang.dictionary.serializers import EntryInput, AddTranslationInput
+from lang.dictionary.serializers import EntryInput, AddTranslationInput, ViewEntryOutput, EditEntryOutput
 
 
 class EntriesView(APIView):
@@ -17,7 +17,7 @@ class EntriesView(APIView):
         return Response(data={
             'data': {
                 'results': [
-                    {'entry': entry} for entry in entries
+                    {'entry': entry} for entry in [EditEntryOutput(entry).data for entry in entries]
                 ]
             }
         })
@@ -33,7 +33,7 @@ class EntriesView(APIView):
 
         return Response(data={
             'data': {
-                'entry': entry
+                'entry': ViewEntryOutput(entry).data
             }
         })
 
@@ -45,7 +45,7 @@ class EntryView(APIView):
         entry = self.get_entry_controller.execute(entry_id)
         return Response(data={
             'data': {
-                'entry': entry
+                'entry': EditEntryOutput(entry).data
             }
         })
 
@@ -60,7 +60,7 @@ class SearchEntryView(APIView):
         return Response(data={
             'data': {
                 'results': [
-                    {'entry': entry} for entry in entries
+                    {'entry': entry} for entry in [ViewEntryOutput(entry).data for entry in entries]
                 ]
             }
         })

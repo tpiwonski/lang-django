@@ -70,4 +70,4 @@ class AddEntryView(ComponentView):
             entry_form.cleaned_data, translation_forms.get_translations_data()
         )
         
-        return redirect('entry-view', entry_id=entry['id'])
+        return redirect('entry-view', entry_id=entry.id)

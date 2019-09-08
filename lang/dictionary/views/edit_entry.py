@@ -5,6 +5,7 @@ from lang.common.component import ComponentView
 from lang.dictionary.controllers.edit_entry import EditEntry
 from lang.dictionary.controllers.get_entry import GetEntry
 from lang.dictionary.db.entry import LANGUAGES
+from lang.dictionary.serializers import EditEntryOutput
 
 
 class EntryForm(forms.Form):
@@ -46,9 +47,10 @@ class EditEntryView(ComponentView):
 
     def get(self, request, entry_id, *args, **kwargs):
         entry = self.get_entry_controller.execute(entry_id)
-        if not entry['id']:
+        if not entry:
             return self.render({}, **kwargs)
 
+        entry = EditEntryOutput(entry).data
         context = {
             'entry': entry,
             'entry_form': EntryForm(entry),
@@ -58,6 +60,7 @@ class EditEntryView(ComponentView):
 
     def post(self, request, entry_id, *args, **kwargs):
         entry = self.get_entry_controller.execute(entry_id)
+        entry = EditEntryOutput(entry).data
         entry_form = EntryForm(request.POST)
         translation_forms = TranslationFormSet(request.POST, initial=entry['translated_entries'])
         valid_entry = entry_form.is_valid()
@@ -74,4 +77,4 @@ class EditEntryView(ComponentView):
             entry_form.cleaned_data, translation_forms.get_translations_data()
         )
 
-        return redirect('entry-view', entry_id=entry['id'])
+        return redirect('entry-view', entry_id=entry.id)

@@ -1,5 +1,4 @@
 from lang.dictionary.models import Entry
-from lang.dictionary.serializers import ViewEntryOutput
 
 
 class ViewAllEntries(object):
@@ -7,4 +6,4 @@ class ViewAllEntries(object):
 
     def execute(self):
         entries = self.entry_repository.get_all()
-        return [ViewEntryOutput(entry).data for entry in entries]
+        return entries

@@ -5,6 +5,7 @@ from django import forms
 from lang.common.component import ComponentView
 from lang.dictionary.controllers.add_entries import AddEntries
 from lang.dictionary.controllers.translate_entry import TranslateEntry
+from lang.dictionary.serializers import ViewEntryOutput
 
 
 class TranslateEntryForm(forms.Form):
@@ -83,6 +84,6 @@ class AddEntryTranslationsView(ComponentView):
 
         entries = self.add_entries_controller.execute(entries)
         context = {
-            'entries': entries
+            'entries': [ViewEntryOutput(entry).data for entry in entries]
         }
         return self.render(context, **kwargs)
