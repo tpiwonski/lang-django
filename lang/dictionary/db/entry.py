@@ -48,8 +48,8 @@ class EntryQuerySet(models.QuerySet):
 
     def with_translations(self):
         return self.prefetch_related(
-            models.Prefetch('related_objects'),
-            models.Prefetch('related_subjects')
+            models.Prefetch('translation_objects'),
+            models.Prefetch('translation_subjects')
         )
 
 
@@ -107,7 +107,7 @@ class EntryModel(models.Model):
     @property
     def translated_entries(self):
         from lang.dictionary.models import Entry
-        return Entry.objects.filter(Q(related_subjects__subject=self) | Q(related_objects__object=self))
+        return Entry.objects.filter(Q(translation_subjects__subject=self) | Q(translation_objects__object=self))
 
     @property
     def translations(self):
@@ -133,3 +133,13 @@ class EntryModel(models.Model):
     def has_recording(self, url):
         from lang.dictionary.models import Recording
         return Recording.objects.filter(entry=self, url=url).exists()
+
+    def has_synonym(self, entry):
+        from lang.dictionary.models import Synonym
+        return Synonym.objects.filter(
+            (Q(object=self) & Q(subject=entry)) | (Q(object=entry) & Q(subject=self))).exists()
+
+    @property
+    def synonyms(self):
+        from lang.dictionary.models import Entry
+        return Entry.objects.filter(Q(synonym_subjects__subject=self) | Q(synonym_objects__object=self))

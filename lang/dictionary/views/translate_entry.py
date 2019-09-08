@@ -65,10 +65,16 @@ class AddEntryTranslationsView(ComponentView):
 
             translations = []
             for translation_no, translation in entry['translations'].items():
+                translation_entries = []
                 for translation_entry_no, translation_entry in translation['entries'].items():
                     translation_entry = translation_entry['entry']
                     if 'add' in translation_entry:
-                        translations.append(payload[int(entry_no)]['translations'][int(translation_no)])
+                        translation_entries.append(payload[int(entry_no)]['translations'][int(translation_no)]['entries'][int(translation_entry_no)])
+
+                if translation_entries:
+                    t = payload[int(entry_no)]['translations'][int(translation_no)]
+                    t['entries'] = translation_entries
+                    translations.append(t)
 
             if translations:
                 entry = payload[int(entry_no)]

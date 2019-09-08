@@ -62,14 +62,22 @@ class RecordingOutput(ModelSerializer):
         fields = ['url']
 
 
+class SynonymOutput(ModelSerializer):
+
+    class Meta:
+        model = Entry
+        fields = ['id', 'text', 'language']
+
+
 class ViewEntryOutput(ModelSerializer):
     translations = SerializerMethodField()
     translated_entries = TranslationOutput(many=True)
     recordings = RecordingOutput(many=True)
+    synonyms = SynonymOutput(many=True)
 
     class Meta:
         model = Entry
-        fields = ['id', 'text', 'language', 'translations', 'translated_entries', 'recordings']
+        fields = ['id', 'text', 'language', 'translations', 'translated_entries', 'recordings', 'synonyms']
 
     def get_translations(self, entry):
         result = [EntryTranslation(t.subject if t.object == entry else t.object, t.examples)

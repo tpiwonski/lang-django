@@ -6,6 +6,9 @@
         {% for recording in entry.recordings %}
             <a href="{{ recording.url }}" target="_blank"><i class="fas fa-volume-up"></i></a>
         {% endfor %}
+        {% for synonym in entry.synonyms %}
+            <a href="{% url 'entry-view' synonym.id %}">{{ synonym.text }}</a>
+        {% endfor %}
         {% comment %} <a href="{% url 'entry-view' entry.id %}" ic-delete-from="{% url 'entry-view' entry.id %}"><i class="far fa-trash-alt"></i></a> {% endcomment %}
     </div>
     <ul>
