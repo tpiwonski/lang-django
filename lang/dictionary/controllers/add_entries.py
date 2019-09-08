@@ -4,7 +4,6 @@ from django.db import transaction
 
 from lang.dictionary.db.entry import ENTRY_TYPE_SENTENCE
 from lang.dictionary.models import Entry, Example, Recording
-from lang.dictionary.serializers import ViewEntryOutput
 
 
 class AddEntries(object):
@@ -56,9 +55,8 @@ class AddEntries(object):
                             if not example_translation.has_recording(example_data['recording']['url']):
                                 example_translation.add_recording(example_data['recording']['url'])
 
-                            example_relation = example_entry.get_translation(example_translation)
-                            if not example_relation:
-                                example_relation = example_entry.add_translation(example_translation)
+                            if not example_entry.get_translation(example_translation):
+                                example_entry.add_translation(example_translation)
 
                             example = Example.create(example_entry, example_translation)
 
@@ -71,4 +69,4 @@ class AddEntries(object):
 
             entries.append(entry)
 
-        return [ViewEntryOutput(entry).data for entry in entries]
+        return entries

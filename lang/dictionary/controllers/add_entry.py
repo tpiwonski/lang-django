@@ -1,7 +1,6 @@
 from django.db import transaction
 
 from lang.dictionary.models import Entry
-from lang.dictionary.serializers import ViewEntryOutput
 
 
 class AddEntry(object):
@@ -22,4 +21,4 @@ class AddEntry(object):
                 entry.add_translation(translation)
 
         self.entry_repository.save(entry)
-        return ViewEntryOutput(entry).data
+        return entry
