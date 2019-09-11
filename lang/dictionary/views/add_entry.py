@@ -3,12 +3,13 @@ from django.shortcuts import redirect
 
 from lang.common.component import ComponentView
 from lang.dictionary.controllers.add_entry import AddEntry
-from lang.dictionary.db.entry import LANGUAGES, LANGUAGE_EN, LANGUAGE_PL
+from lang.dictionary.db.entry import LANGUAGES, LANGUAGE_EN, LANGUAGE_PL, ENTRY_TYPES
 
 
 class EntryForm(forms.Form):
     text = forms.CharField(max_length=255)
     language = forms.ChoiceField(choices=LANGUAGES)
+    type = forms.ChoiceField(choices=ENTRY_TYPES)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -18,6 +19,7 @@ class EntryForm(forms.Form):
 class TranslationForm(forms.Form):
     text = forms.CharField(required=True)
     language = forms.ChoiceField(choices=LANGUAGES)
+    type = forms.ChoiceField(choices=ENTRY_TYPES)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import List
 
-from rest_framework.serializers import Serializer, CharField, ChoiceField, UUIDField, ModelSerializer, SerializerMethodField
+from rest_framework.serializers import Serializer, CharField, ChoiceField, ModelSerializer, SerializerMethodField
 
 from lang.dictionary.db.entry import LANGUAGES
 from lang.dictionary.models import Example, Entry, Recording
@@ -12,27 +12,11 @@ class EntryInput(Serializer):
     language = ChoiceField(choices=LANGUAGES)
 
 
-class ExampleTranslationOutput(ModelSerializer):
-
-    class Meta:
-        model = Entry
-        fields = ['id', 'text', 'language']
-
-
-class EntryExampleOutput(ModelSerializer):
-    translations = ExampleTranslationOutput(many=True)
-
-    class Meta:
-        model = Entry
-        fields = ['id', 'text', 'translations']
-
-
 class TranslationOutput(ModelSerializer):
-    # examples = EntryExampleOutput(many=True)
 
     class Meta:
         model = Entry
-        fields = ['id', 'text', 'language'] #, 'examples']
+        fields = ['id', 'text', 'language', 'type']
 
 
 class TranslationEntryOutput(ModelSerializer):
@@ -90,7 +74,7 @@ class EditEntryOutput(ModelSerializer):
 
     class Meta:
         model = Entry
-        fields = ['id', 'text', 'language', 'translated_entries']
+        fields = ['id', 'text', 'language', 'type', 'translated_entries']
 
 
 @dataclass
@@ -107,10 +91,3 @@ class TranslationInput(Serializer):
 class AddTranslationInput(Serializer):
     entry = EntryInput()
     translations = TranslationInput(many=True)
-
-
-class AddEntryOutput(ModelSerializer):
-    
-    class Meta:
-        model = Entry
-        fields = ['id']

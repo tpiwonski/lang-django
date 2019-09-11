@@ -8,14 +8,14 @@ class AddEntry(object):
 
     @transaction.atomic
     def execute(self, entry_data, translations_data):
-        entry = self.entry_repository.get_by_text(entry_data['text'], entry_data['language'])
+        entry = self.entry_repository.get_by_text(entry_data['text'], entry_data['language'], entry_data['type'])
         if not entry:
-            entry = Entry.create(entry_data['text'], entry_data['language'])
+            entry = Entry.create(entry_data['text'], entry_data['language'], entry_data['type'])
 
         for translation_data in translations_data:
-            translation = self.entry_repository.get_by_text(translation_data['text'], translation_data['language'])
+            translation = self.entry_repository.get_by_text(translation_data['text'], translation_data['language'], translation_data['type'])
             if not translation:
-                translation = Entry.create(translation_data['text'], translation_data['language'])
+                translation = Entry.create(translation_data['text'], translation_data['language'], translation_data['type'])
 
             if not entry.has_translation(translation):
                 entry.add_translation(translation)

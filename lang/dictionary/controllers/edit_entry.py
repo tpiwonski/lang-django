@@ -8,6 +8,7 @@ class EditEntry(object):
         entry = self.entry_repository.get_by_id(entry_data['id'])
         entry.text = entry_data['text']
         entry.language = entry_data['language']
+        entry.type = entry_data['type']
 
         for translation in entry.translated_entries:
             if translation.id not in [t['id'] for t in translations_data]:
@@ -15,9 +16,9 @@ class EditEntry(object):
 
         for translation_data in translations_data:
             if not translation_data['id']:
-                translation = self.entry_repository.get_by_text(translation_data['text'], translation_data['language'])
+                translation = self.entry_repository.get_by_text(translation_data['text'], translation_data['language'], translation_data['type'])
                 if not translation:
-                    translation = Entry.create(translation_data['text'], translation_data['language'])
+                    translation = Entry.create(translation_data['text'], translation_data['language'], translation_data['type'])
 
                 if not entry.has_translation(translation):
                     entry.add_translation(translation)
@@ -26,9 +27,11 @@ class EditEntry(object):
                 translation = self.entry_repository.get_by_id(translation_data['id'])
                 translation.text = translation_data['text']
                 translation.language = translation_data['language']
+                translation.type = translation_data['type']
+                translation.save()
 
                 if not entry.has_translation(translation):
                     entry.add_translation(translation)
 
-        self.entry_repository.save(entry)
+        entry.save()
         return entry
