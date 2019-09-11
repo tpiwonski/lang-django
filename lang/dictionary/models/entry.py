@@ -27,7 +27,7 @@ class Entry(EntryModel):
         return Translation.create(object=self, subject=entry)
 
     def remove_translation(self, entry):
-        Translation.object.filter(Q(object=self, subject=entry) | Q(object=entry, subject=self)).delete()
+        Translation.objects.filter(Q(object=self, subject=entry) | Q(object=entry, subject=self)).delete()
 
     def add_recording(self, url):
         return Recording.create(self, url)

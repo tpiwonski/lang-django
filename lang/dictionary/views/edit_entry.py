@@ -4,7 +4,7 @@ from django.shortcuts import redirect
 from lang.common.component import ComponentView
 from lang.dictionary.controllers.edit_entry import EditEntry
 from lang.dictionary.controllers.get_entry import GetEntry
-from lang.dictionary.db.entry import LANGUAGES
+from lang.dictionary.db.entry import LANGUAGES, ENTRY_TYPES
 from lang.dictionary.serializers import EditEntryOutput
 
 
@@ -12,12 +12,14 @@ class EntryForm(forms.Form):
     id = forms.UUIDField(widget=forms.HiddenInput())
     text = forms.CharField(max_length=255)
     language = forms.ChoiceField(choices=LANGUAGES)
+    type = forms.ChoiceField(choices=ENTRY_TYPES)
 
 
 class TranslationForm(forms.Form):
     id = forms.UUIDField(required=False, widget=forms.HiddenInput())
     text = forms.CharField(required=True)
     language = forms.ChoiceField(choices=LANGUAGES)
+    type = forms.ChoiceField(choices=ENTRY_TYPES)
 
 
 class TranslationFormSet(forms.BaseFormSet):
@@ -77,4 +79,4 @@ class EditEntryView(ComponentView):
             entry_form.cleaned_data, translation_forms.get_translations_data()
         )
 
-        return redirect('entry-view', entry_id=entry.id)
+        return redirect('entry-view', entry_id=entry['id'])
