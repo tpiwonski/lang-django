@@ -6,7 +6,7 @@ from lang.dictionary.serializers import ViewEntryOutput
 
 
 class SearchEntriesForm(forms.Form):
-    q = forms.CharField(max_length=255)
+    q = forms.CharField(max_length=255, required=False)
 
 
 class SearchEntriesView(ComponentView):

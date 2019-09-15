@@ -9,7 +9,7 @@ from lang.dictionary.serializers import ViewEntryOutput
 
 
 class TranslateEntryForm(forms.Form):
-    q = forms.CharField(max_length=255)
+    q = forms.CharField(max_length=255, required=False)
 
 
 class TranslateEntryView(ComponentView):
