@@ -25,7 +25,7 @@ SECRET_KEY = 'k7nqi+xp3wpzd&5$)&l9843ve31-#l4lz&l1bc@5b3lv7_pxce'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -96,7 +96,7 @@ if os.getenv('GAE_APPLICATION', None):
             'USER': os.getenv('LANG_DATABASE_USER'),
             'PASSWORD': os.getenv('LANG_DATABASE_PASSWORD'),
             'NAME': 'lang_master',
-            # 'PORT': '5432',
+            'PORT': '5432',
         },
     }
 else:
