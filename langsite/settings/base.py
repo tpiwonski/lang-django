@@ -87,28 +87,41 @@ WSGI_APPLICATION = 'langsite.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 
-DATABASES = {
-    # 'default': {
-    #     'ENGINE': 'django.db.backends.sqlite3',
-    #     'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    # }
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'lang_master',
-        'USER': 'lang',
-        'PASSWORD': 'test123',
-        'HOST': 'localhost',
-        'PORT': '5432',
-    },
-    # 'default': {
-    #     'ENGINE': 'django.db.backends.mysql',
-    #     'NAME': 'lang_master',
-    #     'USER': 'lang',
-    #     'PASSWORD': 'test123',
-    #     'HOST': 'localhost',   # Or an IP Address that your DB is hosted on
-    #     'PORT': '3306',
-    # }
-}
+
+if os.getenv('GAE_APPLICATION', None):
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'HOST': '/cloudsql/lang-253320:us-east1:lang-dev',
+            'USER': os.getenv('LANG_DATABASE_USER'),
+            'PASSWORD': os.getenv('LANG_DATABASE_PASSWORD'),
+            'NAME': 'lang_master',
+            # 'PORT': '5432',
+        },
+    }
+else:
+    DATABASES = {
+        # 'default': {
+        #     'ENGINE': 'django.db.backends.sqlite3',
+        #     'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        # }
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': 'lang_master',
+            'USER': 'lang',
+            'PASSWORD': 'test123',
+            'HOST': 'localhost',
+            'PORT': '5432',
+        },
+        # 'default': {
+        #     'ENGINE': 'django.db.backends.mysql',
+        #     'NAME': 'lang_master',
+        #     'USER': 'lang',
+        #     'PASSWORD': 'test123',
+        #     'HOST': 'localhost',   # Or an IP Address that your DB is hosted on
+        #     'PORT': '3306',
+        # }
+    }
 
 
 # Password validation
