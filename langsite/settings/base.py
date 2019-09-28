@@ -93,10 +93,10 @@ if os.getenv('GAE_APPLICATION', None):
         'default': {
             'ENGINE': 'django.db.backends.postgresql_psycopg2',
             'HOST': '/cloudsql/lang-253320:us-east1:lang-dev',
+            'PORT': '5432',
+            'NAME': 'lang_master',
             'USER': os.getenv('LANG_DATABASE_USER'),
             'PASSWORD': os.getenv('LANG_DATABASE_PASSWORD'),
-            'NAME': 'lang_master',
-            'PORT': '5432',
         },
     }
 else:
@@ -107,11 +107,12 @@ else:
         # }
         'default': {
             'ENGINE': 'django.db.backends.postgresql_psycopg2',
-            'NAME': 'lang_master',
-            'USER': 'lang',
-            'PASSWORD': 'test123',
-            'HOST': 'localhost',
+            'HOST': '127.0.0.1',
             'PORT': '5432',
+            'NAME': 'lang_master',
+            'USER': os.getenv('LANG_DATABASE_USER'),
+            'PASSWORD': os.getenv('LANG_DATABASE_PASSWORD'),
+
         },
         # 'default': {
         #     'ENGINE': 'django.db.backends.mysql',
