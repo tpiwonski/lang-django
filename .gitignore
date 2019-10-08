@@ -1,7 +1,8 @@
-.venv/
+.venv
 *.sqlite3
 *.pyc
-.vscode/
-__pycache__/
-.idea/
-langsite/static/
+.vscode
+__pycache__
+.idea
+langsite/static
+.pytest_cache

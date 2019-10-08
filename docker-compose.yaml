@@ -1,0 +1,18 @@
+version: '3'
+services:
+  database:
+    image: postgres:12
+    environment:
+      POSTGRES_USER: lang
+      POSTGRES_PASSWORD: test123
+    volumes:
+      - C:/Data/lang-django:/var/lib/postgresql/data
+
+  backend:
+    build: .
+    ports:
+      - 8000:8000
+    links:
+      - database
+    depends_on:
+      - database
