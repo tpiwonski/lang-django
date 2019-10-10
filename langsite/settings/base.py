@@ -25,7 +25,7 @@ SECRET_KEY = 'k7nqi+xp3wpzd&5$)&l9843ve31-#l4lz&l1bc@5b3lv7_pxce'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -87,28 +87,42 @@ WSGI_APPLICATION = 'langsite.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 
-DATABASES = {
-    # 'default': {
-    #     'ENGINE': 'django.db.backends.sqlite3',
-    #     'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    # }
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'lang_master',
-        'USER': 'lang',
-        'PASSWORD': 'test123',
-        'HOST': 'localhost',
-        'PORT': '5432',
-    },
-    # 'default': {
-    #     'ENGINE': 'django.db.backends.mysql',
-    #     'NAME': 'lang_master',
-    #     'USER': 'lang',
-    #     'PASSWORD': 'test123',
-    #     'HOST': 'localhost',   # Or an IP Address that your DB is hosted on
-    #     'PORT': '3306',
-    # }
-}
+
+if os.getenv('GAE_APPLICATION', None):
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'HOST': '/cloudsql/lang-253320:us-east1:lang-dev',
+            'PORT': '5432',
+            'NAME': 'lang_master',
+            'USER': os.getenv('LANG_DATABASE_USER'),
+            'PASSWORD': os.getenv('LANG_DATABASE_PASSWORD'),
+        },
+    }
+else:
+    DATABASES = {
+        # 'default': {
+        #     'ENGINE': 'django.db.backends.sqlite3',
+        #     'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        # }
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'HOST': '127.0.0.1',
+            'PORT': '5432',
+            'NAME': 'lang_master',
+            'USER': os.getenv('LANG_DATABASE_USER'),
+            'PASSWORD': os.getenv('LANG_DATABASE_PASSWORD'),
+
+        },
+        # 'default': {
+        #     'ENGINE': 'django.db.backends.mysql',
+        #     'NAME': 'lang_master',
+        #     'USER': 'lang',
+        #     'PASSWORD': 'test123',
+        #     'HOST': 'localhost',   # Or an IP Address that your DB is hosted on
+        #     'PORT': '3306',
+        # }
+    }
 
 
 # Password validation
