@@ -18,6 +18,7 @@ requests = "==2.22.0"
 beautifulsoup4 = "==4.7.1"
 django-widget-tweaks = "==1.4.3"
 mysqlclient = "==1.4.4"
+gunicorn = "==19.9.0"
 
 [requires]
 python_version = "3.7"

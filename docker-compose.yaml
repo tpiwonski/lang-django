@@ -1,0 +1,41 @@
+version: '3.7'
+services:
+  backend:
+    container_name: lang-app
+    build:
+      context: .
+    restart: always
+    command: /usr/bin/env gunicorn langsite.wsgi:application --bind 0.0.0.0:8000 --workers=1 --reload
+    environment:
+      DJANGO_SETTINGS_MODULE: langsite.settings.docker
+    expose:
+#    ports:
+      - 8000
+    links:
+      - database
+    depends_on:
+      - database
+    volumes:
+      - .:/lang-django
+
+  nginx:
+    container_name: lang-nginx
+    build: ./nginx
+    ports:
+      - 8000:8000
+    depends_on:
+      - backend
+
+  database:
+    container_name: lang-db
+    image: postgres:12
+    environment:
+      POSTGRES_USER: lang
+      POSTGRES_PASSWORD: test123
+    ports:
+      - 5432:5432
+    volumes:
+      - dbdata:/var/lib/postgresql/data
+
+volumes:
+  dbdata:
