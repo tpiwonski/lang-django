@@ -1,6 +1,6 @@
 from lang.dictionary.db.entry import ENTRY_TYPE_NOUN, ENTRY_TYPE_ADVERB, ENTRY_TYPE_ADJECTIVE, ENTRY_TYPE_VERB, \
     ENTRY_TYPE_PRONOUN, ENTRY_TYPE_PREPOSITION, ENTRY_TYPE_CONJUNCTION, ENTRY_TYPE_INTERJECTION, ENTRY_TYPE_IDIOM, \
-    ENTRY_TYPE_PHRASAL_VERB, ENTRY_TYPE_PREFIX, ENTRY_TYPE_UNKNOWN
+    ENTRY_TYPE_PHRASAL_VERB, ENTRY_TYPE_PREFIX, ENTRY_TYPE_UNKNOWN, ENTRY_TYPE_SUFFIX
 from lang.dictionary.types import EntryData, RecordingData, TranslationData, TranslationEntryData, ExampleData
 from .client import HtmlClient
 
@@ -19,6 +19,7 @@ ENTRY_TYPES_MAP = {
     'prefiks': ENTRY_TYPE_PREFIX,
     # 'phrase': ENTRY_TYPE_PHRASE = 12
     # 'sentenceENTRY_TYPE_SENTENCE = 13
+    'suffiks': ENTRY_TYPE_SUFFIX,
 }
 
 
@@ -43,13 +44,14 @@ class TranslationService(object):
                         text=entry_data['text'],
                         language=entry_language,
                         type=entry_type,
+                        url=entry_data['url'],
                         translations=[],
                         recordings=[RecordingData(url=r['url']) for r in entry_data['recordings']]))
 
                 translation = TranslationData(
                     language=translation_language,
                     type=entry_type,
-                    entries=[TranslationEntryData(text=t['text']) for t in meaning_data['translations']],
+                    entries=[TranslationEntryData(text=t['text'], url=t['url']) for t in meaning_data['translations']],
                     recordings=[RecordingData(url=r['url']) for r in meaning_data['recordings']],
                     examples=[ExampleData(
                         text=e['text'], translation=e['translation'], recording=RecordingData(url=e['recording']['url']))

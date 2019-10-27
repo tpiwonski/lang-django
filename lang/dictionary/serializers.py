@@ -16,13 +16,13 @@ class TranslationOutput(ModelSerializer):
 
     class Meta:
         model = Entry
-        fields = ['id', 'text', 'language', 'type']
+        fields = ['id', 'text', 'language', 'type', 'url']
 
 
 class TranslationEntryOutput(ModelSerializer):
     class Meta:
         model = Entry
-        fields = ['id', 'text', 'language']
+        fields = ['id', 'text', 'language', 'url']
 
 
 class TranslationExampleOutput(ModelSerializer):
@@ -61,7 +61,7 @@ class ViewEntryOutput(ModelSerializer):
 
     class Meta:
         model = Entry
-        fields = ['id', 'text', 'language', 'translations', 'translated_entries', 'recordings', 'synonyms']
+        fields = ['id', 'text', 'language', 'url', 'translations', 'translated_entries', 'recordings', 'synonyms']
 
     def get_translations(self, entry):
         result = [EntryTranslation(t.subject if t.object == entry else t.object, t.examples)

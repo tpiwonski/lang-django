@@ -17,6 +17,7 @@ class ExampleData(object):
 @dataclass
 class TranslationEntryData(object):
     text: str
+    url: str
 
 
 @dataclass
@@ -33,5 +34,6 @@ class EntryData(object):
     text: str
     language: str
     type: int
+    url: str
     translations: List[TranslationData]
     recordings: List[RecordingData]

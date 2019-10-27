@@ -19,7 +19,7 @@ class AddEntries(object):
         for entry_data in entries_data:
             entry = self.entry_repository.get_by_text(entry_data.text, entry_data.language, entry_data.type)
             if not entry:
-                entry = Entry.create(entry_data.text, entry_data.language, entry_data.type)
+                entry = Entry.create(entry_data.text, entry_data.language, entry_data.type, entry_data.url)
 
             for entry_recording_data in entry_data.recordings:
                 if not entry.has_recording(entry_recording_data.url):
@@ -32,7 +32,7 @@ class AddEntries(object):
                         translation_entry.text, translation_data.language, translation_data.type)
                     if not translation:
                         translation = Entry.create(
-                            translation_entry.text, translation_data.language, translation_data.type)
+                            translation_entry.text, translation_data.language, translation_data.type, translation_entry.url)
 
                     synonyms.append(translation)
 
