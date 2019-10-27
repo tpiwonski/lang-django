@@ -142,4 +142,4 @@ class EntryModel(models.Model):
     @property
     def synonyms(self):
         from lang.dictionary.models import Entry
-        return Entry.objects.filter(Q(synonym_subjects__subject=self) | Q(synonym_objects__object=self))
+        return Entry.objects.filter(Q(synonym_subjects__subject=self) | Q(synonym_objects__object=self)).distinct()
