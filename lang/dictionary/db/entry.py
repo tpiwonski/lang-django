@@ -25,6 +25,7 @@ ENTRY_TYPE_PHRASAL_VERB = 10
 ENTRY_TYPE_PREFIX = 11
 ENTRY_TYPE_PHRASE = 12
 ENTRY_TYPE_SENTENCE = 13
+ENTRY_TYPE_SUFFIX = 14
 
 ENTRY_TYPES = (
     (ENTRY_TYPE_UNKNOWN, 'unknown'),
@@ -41,6 +42,7 @@ ENTRY_TYPES = (
     (ENTRY_TYPE_PREFIX, 'prefix'),
     (ENTRY_TYPE_PHRASE, 'phrase'),
     (ENTRY_TYPE_SENTENCE, 'sentence'),
+    (ENTRY_TYPE_SUFFIX, 'suffix'),
 )
 
 
@@ -95,6 +97,7 @@ class EntryModel(models.Model):
     text = models.CharField(max_length=255)
     language = models.CharField(max_length=2, choices=LANGUAGES)
     type = models.PositiveSmallIntegerField(choices=ENTRY_TYPES, default=0)
+    url = models.URLField(max_length=2000, blank=True, default='')
     created_at = models.DateTimeField(auto_now_add=True) 
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -102,7 +105,7 @@ class EntryModel(models.Model):
 
     class Meta:
         db_table = 'dictionary_entry'
-        unique_together = (('text', 'language', 'type'),)
+        unique_together = (('text', 'language', 'type', 'url'),)
 
     @property
     def translated_entries(self):

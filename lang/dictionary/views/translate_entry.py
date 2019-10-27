@@ -1,10 +1,12 @@
 import json
+from dataclasses import asdict
 
 from django import forms
 
 from lang.common.component import ComponentView
 from lang.dictionary.controllers.add_entries import AddEntries
 from lang.dictionary.controllers.translate_entry import TranslateEntry
+from lang.dictionary.types import EntryData, RecordingData, TranslationEntryData, TranslationData, ExampleData
 from lang.dictionary.serializers import ViewEntryOutput
 
 
@@ -31,7 +33,7 @@ class TranslateEntryView(ComponentView):
             entries = self.translate_entry_controller.execute(text)
             context.update({
                 'entries': entries,
-                'payload': json.dumps(entries)
+                'payload': json.dumps([asdict(e) for e in entries])
             })
 
         return self.render(context, **kwargs)
@@ -70,16 +72,32 @@ class AddEntryTranslationsView(ComponentView):
                 for translation_entry_no, translation_entry in translation['entries'].items():
                     translation_entry = translation_entry['entry']
                     if 'add' in translation_entry:
-                        translation_entries.append(payload[int(entry_no)]['translations'][int(translation_no)]['entries'][int(translation_entry_no)])
+                        translation_entry_data = payload[int(entry_no)]['translations'][int(translation_no)]['entries'][int(translation_entry_no)]
+                        translation_entry = TranslationEntryData(text=translation_entry_data['text'], url=translation_entry_data['url'])
+                        translation_entries.append(translation_entry)
 
                 if translation_entries:
-                    t = payload[int(entry_no)]['translations'][int(translation_no)]
-                    t['entries'] = translation_entries
-                    translations.append(t)
+                    translation_data = payload[int(entry_no)]['translations'][int(translation_no)]
+                    translation = TranslationData(
+                        language=translation_data['language'],
+                        type=translation_data['type'],
+                        entries=translation_entries,
+                        recordings=[RecordingData(url=r['url']) for r in translation_data['recordings']],
+                        examples=[ExampleData(text=e['text'], translation=e['translation'], recording=RecordingData(url=e['recording']['url']))
+                                  for e in translation_data['examples']])
+
+                    translations.append(translation)
 
             if translations:
-                entry = payload[int(entry_no)]
-                entry['translations'] = translations
+                entry_data = payload[int(entry_no)]
+                entry = EntryData(
+                    text=entry_data['text'],
+                    language=entry_data['language'],
+                    type=entry_data['type'],
+                    url=entry_data['url'],
+                    translations=translations,
+                    recordings=[RecordingData(url=r['url']) for r in entry_data['recordings']])
+
                 entries.append(entry)
 
         entries = self.add_entries_controller.execute(entries)

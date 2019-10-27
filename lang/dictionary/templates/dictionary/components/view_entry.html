@@ -6,6 +6,9 @@
         {% for recording in entry.recordings %}
             <a href="{{ recording.url }}" target="_blank"><i class="fas fa-volume-up"></i></a>
         {% endfor %}
+        {% if entry.url %}
+            <a href="{{ entry.url }}" target="_blank"><i class="fas fa-external-link-alt"></i></a>
+        {% endif %}
         {% for synonym in entry.synonyms %}
             <a href="{% url 'entry-view' synonym.id %}">{{ synonym.text }}</a>
         {% endfor %}
@@ -15,6 +18,9 @@
     {% for translation in entry.translations %}
         <li>
             <a href="{% url 'entry-view' translation.entry.id %}">{{ translation.entry.text }}</a>
+            {% if translation.entry.url %}
+                <a href="{{ translation.entry.url }}" target="_blank"><i class="fas fa-external-link-alt"></i></a>
+            {% endif %}
             <ul>
             {% for example in translation.examples %}
                 <li>

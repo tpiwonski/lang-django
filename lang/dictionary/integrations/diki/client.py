@@ -20,13 +20,17 @@ import html
 #     )
 # )
 
+DIKI_ROOT_URL = "https://diki.pl"
+DIKI_DICTIONARY_SEGMENT = '/slownik-angielskiego?q='
+
+
 class HtmlClient(object):
     
     def __init__(self):
         self.session = Session()
 
     def translate(self, entry):
-        response = self.session.get("https://diki.pl/{}".format(entry))
+        response = self.session.get("{}/{}".format(DIKI_ROOT_URL, entry))
         parser = HtmlParser()
         return parser.parse_results(response.content.decode('utf-8').replace('&apos;', "'"))
 
@@ -71,10 +75,17 @@ class HtmlParser(object):
 
     def parse_entry(self, content):
         entry_tag = content.select('.hws .hw') #find('div', clss_='hws').find('span', class_='hw')
-        text = entry_tag[0].text.strip()
+        entry_tag = entry_tag[0]
+        text = entry_tag.text.strip()
+        url_tag = entry_tag.find('a', class_='plainLink', recursive=False)
+        if url_tag:
+            url = '{}{}'.format(DIKI_ROOT_URL, url_tag['href'])
+        else:
+            url = '{}{}{}'.format(DIKI_ROOT_URL, DIKI_DICTIONARY_SEGMENT, text)
+
         meanings = self.parse_meanings(content)
         recordings = self.parse_recordings(content, css='.hws .hw+')
-        return dict(text=text, meanings=meanings, recordings=recordings)
+        return dict(text=text, url=url, meanings=meanings, recordings=recordings)
 
     def parse_meanings(self, content):
         meanings = []
@@ -124,14 +135,15 @@ class HtmlParser(object):
         return translations
 
     def parse_translation(self, content):
-        return dict(text=content.text.strip())
+        url_tag = content.find('a', class_='plainLink')
+        return dict(text=content.text.strip(), url='{}{}'.format(DIKI_ROOT_URL, url_tag['href']))
 
     def parse_recordings(self, content, css=''):
         recording_tags = content.select('{}.recordingsAndTranscriptions .hasRecording *[data-audio-url]'.format(css))
         recordings = []
         for recording_tag in recording_tags:
             recordings.append({
-                'url': 'https://diki.pl' + recording_tag['data-audio-url']
+                'url': '{}{}'.format(DIKI_ROOT_URL, recording_tag['data-audio-url'])
             })
 
         return recordings

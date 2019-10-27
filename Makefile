@@ -17,4 +17,4 @@ drop-db:
 create-db:
 	docker-compose exec database createdb -U lang lang
 migrate:
-	docker-compose exec backend python manage.py migrate
+	docker-compose run --rm backend python manage.py migrate
