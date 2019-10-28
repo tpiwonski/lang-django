@@ -73,7 +73,7 @@ class AddEntryTranslationsView(ComponentView):
                     translation_entry = translation_entry['entry']
                     if 'add' in translation_entry:
                         translation_entry_data = payload[int(entry_no)]['translations'][int(translation_no)]['entries'][int(translation_entry_no)]
-                        translation_entry = TranslationEntryData(text=translation_entry_data['text'], url=translation_entry_data['url'])
+                        translation_entry = TranslationEntryData(text=translation_entry_data['text'], source_url=translation_entry_data['source_url'])
                         translation_entries.append(translation_entry)
 
                 if translation_entries:
@@ -82,8 +82,8 @@ class AddEntryTranslationsView(ComponentView):
                         language=translation_data['language'],
                         type=translation_data['type'],
                         entries=translation_entries,
-                        recordings=[RecordingData(url=r['url']) for r in translation_data['recordings']],
-                        examples=[ExampleData(text=e['text'], translation=e['translation'], recording=RecordingData(url=e['recording']['url']))
+                        recordings=[RecordingData(audio_url=r['url']) for r in translation_data['recordings']],
+                        examples=[ExampleData(text=e['text'], translation=e['translation'], recording=RecordingData(audio_url=e['recording']['audio_url']))
                                   for e in translation_data['examples']])
 
                     translations.append(translation)
@@ -94,9 +94,9 @@ class AddEntryTranslationsView(ComponentView):
                     text=entry_data['text'],
                     language=entry_data['language'],
                     type=entry_data['type'],
-                    url=entry_data['url'],
+                    source_url=entry_data['source_url'],
                     translations=translations,
-                    recordings=[RecordingData(url=r['url']) for r in entry_data['recordings']])
+                    recordings=[RecordingData(audio_url=r['audio_url']) for r in entry_data['recordings']])
 
                 entries.append(entry)
 

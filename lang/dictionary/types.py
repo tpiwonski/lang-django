@@ -4,7 +4,7 @@ from typing import List
 
 @dataclass
 class RecordingData(object):
-    url: str
+    audio_url: str
 
 
 @dataclass
@@ -17,7 +17,7 @@ class ExampleData(object):
 @dataclass
 class TranslationEntryData(object):
     text: str
-    url: str
+    source_url: str
 
 
 @dataclass
@@ -34,6 +34,6 @@ class EntryData(object):
     text: str
     language: str
     type: int
-    url: str
+    source_url: str
     translations: List[TranslationData]
     recordings: List[RecordingData]

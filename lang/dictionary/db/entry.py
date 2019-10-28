@@ -97,7 +97,7 @@ class EntryModel(models.Model):
     text = models.CharField(max_length=255)
     language = models.CharField(max_length=2, choices=LANGUAGES)
     type = models.PositiveSmallIntegerField(choices=ENTRY_TYPES, default=0)
-    url = models.URLField(max_length=2000, blank=True, default='')
+    source_url = models.URLField(max_length=2000, blank=True, default='')
     created_at = models.DateTimeField(auto_now_add=True) 
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -105,7 +105,7 @@ class EntryModel(models.Model):
 
     class Meta:
         db_table = 'dictionary_entry'
-        unique_together = (('text', 'language', 'type', 'url'),)
+        unique_together = (('text', 'language', 'type', 'source_url'),)
 
     @property
     def translated_entries(self):
@@ -135,7 +135,7 @@ class EntryModel(models.Model):
 
     def has_recording(self, url):
         from lang.dictionary.models import Recording
-        return Recording.objects.filter(entry=self, url=url).exists()
+        return Recording.objects.filter(entry=self, audio_url=url).exists()
 
     def has_synonym(self, entry):
         from lang.dictionary.models import Synonym

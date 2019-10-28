@@ -4,8 +4,8 @@ services:
     container_name: lang-app
     build:
       context: .
-    restart: always
-    command: /usr/bin/env gunicorn langsite.wsgi:application --bind 0.0.0.0:8000 --workers=1 --reload
+    restart: unless-stopped
+#    command: /usr/bin/env gunicorn langsite.wsgi:application --bind 0.0.0.0:8000 --workers=1 --reload
     environment:
       DJANGO_SETTINGS_MODULE: langsite.settings.docker
     expose:

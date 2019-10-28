@@ -9,5 +9,5 @@ class Recording(RecordingModel):
         proxy = True
 
     @classmethod
-    def create(cls, entry, url):
-        return Recording.objects.create(id=uuid.uuid4(), entry=entry, url=url)
+    def create(cls, entry, audio_url):
+        return Recording.objects.create(id=uuid.uuid4(), entry=entry, audio_url=audio_url)

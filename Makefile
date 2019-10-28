@@ -18,3 +18,5 @@ create-db:
 	docker-compose exec database createdb -U lang lang
 migrate:
 	docker-compose run --rm backend python manage.py migrate
+dev:
+	 docker-compose.exe -f docker-compose.dev.yaml up -d

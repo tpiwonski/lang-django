@@ -14,7 +14,7 @@ class RecordingManager(models.Manager):
 class RecordingModel(models.Model):
     id = models.UUIDField(primary_key=True)
     entry = models.ForeignKey('lang.Entry', on_delete=models.CASCADE, related_name='recordings')
-    url = models.URLField(max_length=1024)
+    audio_url = models.URLField(max_length=1024)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
