@@ -4,10 +4,10 @@
         <a href="{% url 'entry-view' entry.id %}">{{ entry.text }}</a>
         <a href="{% url 'edit-entry' entry.id %}"><i class="fas fa-edit"></i></a>
         {% for recording in entry.recordings %}
-            <a href="{{ recording.url }}" target="_blank"><i class="fas fa-volume-up"></i></a>
+            <a href="{{ recording.audio_url }}" target="_blank"><i class="fas fa-volume-up"></i></a>
         {% endfor %}
-        {% if entry.url %}
-            <a href="{{ entry.url }}" target="_blank"><i class="fas fa-external-link-alt"></i></a>
+        {% if entry.source_url %}
+            <a href="{{ entry.source_url }}" target="_blank"><i class="fas fa-external-link-alt"></i></a>
         {% endif %}
         {% for synonym in entry.synonyms %}
             <a href="{% url 'entry-view' synonym.id %}">{{ synonym.text }}</a>
@@ -18,13 +18,23 @@
     {% for translation in entry.translations %}
         <li>
             <a href="{% url 'entry-view' translation.entry.id %}">{{ translation.entry.text }}</a>
-            {% if translation.entry.url %}
-                <a href="{{ translation.entry.url }}" target="_blank"><i class="fas fa-external-link-alt"></i></a>
+            {% if translation.entry.source_url %}
+                <a href="{{ translation.entry.source_url }}" target="_blank"><i class="fas fa-external-link-alt"></i></a>
             {% endif %}
             <ul>
             {% for example in translation.examples %}
                 <li>
-                    <span><a href="{% url 'entry-view' example.object.id %}">{{ example.object.text }}</a> - <a href="{% url 'entry-view' example.subject.id %}">{{ example.subject.text }}</a></span>
+                    <span>
+                        <a href="{% url 'entry-view' example.object.id %}">{{ example.object.text }}</a>
+                        {% for recording in example.object.recordings %}
+                            <a href="{{ recording.audio_url }}" target="_blank"><i class="fas fa-volume-up"></i></a>
+                        {% endfor %}
+                        -
+                        <a href="{% url 'entry-view' example.subject.id %}">{{ example.subject.text }}</a>
+                        {% for recording in example.subject.recordings %}
+                            <a href="{{ recording.audio_url }}" target="_blank"><i class="fas fa-volume-up"></i></a>
+                        {% endfor %}
+                    </span>
                 </li>
             {% endfor %}
             </ul>

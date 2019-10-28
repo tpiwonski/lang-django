@@ -16,13 +16,22 @@ class TranslationOutput(ModelSerializer):
 
     class Meta:
         model = Entry
-        fields = ['id', 'text', 'language', 'type', 'url']
+        fields = ['id', 'text', 'language', 'type', 'source_url']
+
+
+class RecordingOutput(ModelSerializer):
+
+    class Meta:
+        model = Recording
+        fields = ['audio_url']
 
 
 class TranslationEntryOutput(ModelSerializer):
+    recordings = RecordingOutput(many=True)
+
     class Meta:
         model = Entry
-        fields = ['id', 'text', 'language', 'url']
+        fields = ['id', 'text', 'language', 'source_url', 'recordings']
 
 
 class TranslationExampleOutput(ModelSerializer):
@@ -37,13 +46,6 @@ class TranslationExampleOutput(ModelSerializer):
 class EntryTranslationOutput(Serializer):
     entry = TranslationEntryOutput()
     examples = TranslationExampleOutput(many=True)
-
-
-class RecordingOutput(ModelSerializer):
-
-    class Meta:
-        model = Recording
-        fields = ['url']
 
 
 class SynonymOutput(ModelSerializer):
@@ -61,7 +63,7 @@ class ViewEntryOutput(ModelSerializer):
 
     class Meta:
         model = Entry
-        fields = ['id', 'text', 'language', 'url', 'translations', 'translated_entries', 'recordings', 'synonyms']
+        fields = ['id', 'text', 'language', 'source_url', 'translations', 'translated_entries', 'recordings', 'synonyms']
 
     def get_translations(self, entry):
         result = [EntryTranslation(t.subject if t.object == entry else t.object, t.examples)

@@ -19,11 +19,11 @@ class AddEntries(object):
         for entry_data in entries_data:
             entry = self.entry_repository.get_by_text(entry_data.text, entry_data.language, entry_data.type)
             if not entry:
-                entry = Entry.create(entry_data.text, entry_data.language, entry_data.type, entry_data.url)
+                entry = Entry.create(entry_data.text, entry_data.language, entry_data.type, entry_data.source_url)
 
             for entry_recording_data in entry_data.recordings:
-                if not entry.has_recording(entry_recording_data.url):
-                    entry.add_recording(entry_recording_data.url)
+                if not entry.has_recording(entry_recording_data.audio_url):
+                    entry.add_recording(entry_recording_data.audio_url)
 
             for translation_data in entry_data.translations:
                 synonyms = []
@@ -32,7 +32,8 @@ class AddEntries(object):
                         translation_entry.text, translation_data.language, translation_data.type)
                     if not translation:
                         translation = Entry.create(
-                            translation_entry.text, translation_data.language, translation_data.type, translation_entry.url)
+                            translation_entry.text, translation_data.language, translation_data.type,
+                            translation_entry.source_url)
 
                     synonyms.append(translation)
 
@@ -41,8 +42,8 @@ class AddEntries(object):
                         relation = entry.add_translation(translation)
 
                     for entry_recording_data in translation_data.recordings:
-                        if not translation.has_recording(entry_recording_data.url):
-                            translation.add_recording(entry_recording_data.url)
+                        if not translation.has_recording(entry_recording_data.audio_url):
+                            translation.add_recording(entry_recording_data.audio_url)
 
                     for example_data in translation_data.examples:
                         example = self.example_repository.get_by_text(example_data.text)
@@ -60,8 +61,8 @@ class AddEntries(object):
                                 example_translation = Entry.create(
                                     example_data.translation, translation_data.language, ENTRY_TYPE_SENTENCE)
 
-                            if not example_translation.has_recording(example_data.recording.url):
-                                example_translation.add_recording(example_data.recording.url)
+                            if not example_translation.has_recording(example_data.recording.audio_url):
+                                example_translation.add_recording(example_data.recording.audio_url)
 
                             if not example_entry.get_translation(example_translation):
                                 example_entry.add_translation(example_translation)

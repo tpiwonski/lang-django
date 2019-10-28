@@ -1,0 +1,15 @@
+version: '3.7'
+services:
+  database:
+    container_name: lang-db
+    image: postgres:12
+    environment:
+      POSTGRES_USER: lang
+      POSTGRES_PASSWORD: test123
+    ports:
+      - 5432:5432
+    volumes:
+      - dbdata:/var/lib/postgresql/data
+
+volumes:
+  dbdata:

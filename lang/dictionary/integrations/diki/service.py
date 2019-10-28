@@ -44,17 +44,17 @@ class TranslationService(object):
                         text=entry_data['text'],
                         language=entry_language,
                         type=entry_type,
-                        url=entry_data['url'],
+                        source_url=entry_data['url'],
                         translations=[],
-                        recordings=[RecordingData(url=r['url']) for r in entry_data['recordings']]))
+                        recordings=[RecordingData(audio_url=r['url']) for r in entry_data['recordings']]))
 
                 translation = TranslationData(
                     language=translation_language,
                     type=entry_type,
-                    entries=[TranslationEntryData(text=t['text'], url=t['url']) for t in meaning_data['translations']],
-                    recordings=[RecordingData(url=r['url']) for r in meaning_data['recordings']],
+                    entries=[TranslationEntryData(text=t['text'], source_url=t['url']) for t in meaning_data['translations']],
+                    recordings=[RecordingData(audio_url=r['url']) for r in meaning_data['recordings']],
                     examples=[ExampleData(
-                        text=e['text'], translation=e['translation'], recording=RecordingData(url=e['recording']['url']))
+                        text=e['text'], translation=e['translation'], recording=RecordingData(audio_url=e['recording']['url']))
                         for e in meaning_data['examples']])
 
                 entry.translations.append(translation)
