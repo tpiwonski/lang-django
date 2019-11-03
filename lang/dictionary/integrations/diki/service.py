@@ -1,7 +1,7 @@
 from lang.dictionary.db.entry import ENTRY_TYPE_NOUN, ENTRY_TYPE_ADVERB, ENTRY_TYPE_ADJECTIVE, ENTRY_TYPE_VERB, \
     ENTRY_TYPE_PRONOUN, ENTRY_TYPE_PREPOSITION, ENTRY_TYPE_CONJUNCTION, ENTRY_TYPE_INTERJECTION, ENTRY_TYPE_IDIOM, \
     ENTRY_TYPE_PHRASAL_VERB, ENTRY_TYPE_PREFIX, ENTRY_TYPE_UNKNOWN, ENTRY_TYPE_SUFFIX
-from lang.dictionary.types import EntryData, RecordingData, TranslationData, TranslationEntryData, ExampleData
+from lang.dictionary.data import EntryData, RecordingData, TranslationData, TranslationEntryData, ExampleData
 from .client import HtmlClient
 
 ENTRY_TYPES_MAP = {
@@ -37,7 +37,12 @@ class TranslationService(object):
         entries_by_type = {}
         for entry_data in result['entries']:
             for meaning_data in entry_data['meanings']:
-                entry_type = ENTRY_TYPES_MAP.get(meaning_data.get('part_of_speech'), ENTRY_TYPE_UNKNOWN)
+                part_of_speech = meaning_data.get('part_of_speech')
+                if not part_of_speech:
+                    entry_type = ENTRY_TYPE_UNKNOWN
+                else:
+                    entry_type = ENTRY_TYPES_MAP.get(part_of_speech)
+                    assert entry_type is not None, "Unknown part of speech: {}".format(part_of_speech)
 
                 entry = entries_by_type.setdefault(
                     (entry_type, entry_data['text']), EntryData(
@@ -51,10 +56,12 @@ class TranslationService(object):
                 translation = TranslationData(
                     language=translation_language,
                     type=entry_type,
-                    entries=[TranslationEntryData(text=t['text'], source_url=t['url']) for t in meaning_data['translations']],
+                    entries=[TranslationEntryData(
+                        text=t['text'], source_url=t['url']) for t in meaning_data['translations']],
                     recordings=[RecordingData(audio_url=r['url']) for r in meaning_data['recordings']],
                     examples=[ExampleData(
-                        text=e['text'], translation=e['translation'], recording=RecordingData(audio_url=e['recording']['url']))
+                        text=e['text'], translation=e['translation'],
+                        recording=RecordingData(audio_url=e['recording']['url']))
                         for e in meaning_data['examples']])
 
                 entry.translations.append(translation)

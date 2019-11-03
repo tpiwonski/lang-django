@@ -5,7 +5,7 @@ from django.db import transaction
 
 from lang.dictionary.db.entry import ENTRY_TYPE_SENTENCE
 from lang.dictionary.models import Entry, Example, Recording
-from lang.dictionary.types import EntryData
+from lang.dictionary.data import EntryData
 
 
 class AddEntries(object):

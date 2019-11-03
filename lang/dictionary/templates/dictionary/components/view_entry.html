@@ -14,6 +14,9 @@
         {% endfor %}
         {% comment %} <a href="{% url 'entry-view' entry.id %}" ic-delete-from="{% url 'entry-view' entry.id %}"><i class="far fa-trash-alt"></i></a> {% endcomment %}
     </div>
+    <div>
+        <span>{{ entry.type_name }}</span>
+    </div>
     <ul>
     {% for translation in entry.translations %}
         <li>
