@@ -3,7 +3,7 @@ from typing import List
 
 from rest_framework.serializers import Serializer, CharField, ChoiceField, ModelSerializer, SerializerMethodField
 
-from lang.dictionary.db.entry import LANGUAGES
+from lang.dictionary.db.entry import LANGUAGES, ENTRY_TYPES
 from lang.dictionary.models import Example, Entry, Recording
 
 
@@ -56,6 +56,7 @@ class SynonymOutput(ModelSerializer):
 
 
 class ViewEntryOutput(ModelSerializer):
+    type_name = SerializerMethodField()
     translations = SerializerMethodField()
     translated_entries = TranslationOutput(many=True)
     recordings = RecordingOutput(many=True)
@@ -63,7 +64,10 @@ class ViewEntryOutput(ModelSerializer):
 
     class Meta:
         model = Entry
-        fields = ['id', 'text', 'language', 'source_url', 'translations', 'translated_entries', 'recordings', 'synonyms']
+        fields = ['id', 'text', 'language', 'type', 'type_name', 'source_url', 'translations', 'translated_entries', 'recordings', 'synonyms']
+
+    def get_type_name(self, entry):
+        return dict(ENTRY_TYPES).get(entry.type)
 
     def get_translations(self, entry):
         result = [EntryTranslation(t.subject if t.object == entry else t.object, t.examples)

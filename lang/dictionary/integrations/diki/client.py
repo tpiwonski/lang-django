@@ -32,7 +32,7 @@ class HtmlClient(object):
     def translate(self, entry):
         response = self.session.get("{}/{}".format(DIKI_ROOT_URL, entry))
         parser = HtmlParser()
-        return parser.parse_results(response.content.decode('utf-8').replace('&apos;', "'"))
+        return parser.parse_results(response.content.decode('utf-8').replace('&apos;', "'").replace('&nbsp;', ' '))
 
 
 class HtmlParser(object):
@@ -69,23 +69,31 @@ class HtmlParser(object):
         entity_tags = content.find_all('div', class_='dictionaryEntity')
         entries = []
         for entity_tag in entity_tags:
-            entries.append(self.parse_entry(entity_tag))
+            entries.extend(self.parse_entry(entity_tag))
 
         return entries
 
     def parse_entry(self, content):
-        entry_tag = content.select('.hws .hw') #find('div', clss_='hws').find('span', class_='hw')
-        entry_tag = entry_tag[0]
-        text = entry_tag.text.strip()
-        url_tag = entry_tag.find('a', class_='plainLink', recursive=False)
-        if url_tag:
-            url = '{}{}'.format(DIKI_ROOT_URL, url_tag['href'])
-        else:
-            url = '{}{}{}'.format(DIKI_ROOT_URL, DIKI_DICTIONARY_SEGMENT, text)
-
+        entry_tags = content.select('.hws .hw')
         meanings = self.parse_meanings(content)
-        recordings = self.parse_recordings(content, css='.hws .hw+')
-        return dict(text=text, url=url, meanings=meanings, recordings=recordings)
+
+        entries = []
+        for entry_tag in entry_tags:
+            text = entry_tag.text.strip()
+            url_tag = entry_tag.find('a', class_='plainLink', recursive=False)
+            if url_tag:
+                url = '{}{}'.format(DIKI_ROOT_URL, url_tag['href'])
+            else:
+                url = '{}{}{}'.format(DIKI_ROOT_URL, DIKI_DICTIONARY_SEGMENT, text)
+
+            recordings = []
+            recordings_tag = entry_tag.find_next_sibling('span', class_='recordingsAndTranscriptions')
+            if recordings_tag:
+                recordings = self.parse_recordings(recordings_tag)
+
+            entries.append(dict(text=text, url=url, meanings=meanings, recordings=recordings))
+
+        return entries
 
     def parse_meanings(self, content):
         meanings = []
@@ -108,7 +116,7 @@ class HtmlParser(object):
 
     def parse_entry_slice(self, content, part_of_speech):
         translations = self.parse_translations(content)
-        recordings = self.parse_recordings(content, css='.hw + ')
+        recordings = self.parse_recordings(content, css='.hw + .recordingsAndTranscriptions')
         examples = self.parse_examples(content)
         return dict(part_of_speech=part_of_speech, translations=translations, recordings=recordings, examples=examples)
 
@@ -122,7 +130,7 @@ class HtmlParser(object):
 
     def parse_meaning(self, content, part_of_speech):
         translations = self.parse_translations(content)
-        recordings = self.parse_recordings(content, css='.hw + ')
+        recordings = self.parse_recordings(content, css='.hw + .recordingsAndTranscriptions')
         examples = self.parse_examples(content)
         return dict(part_of_speech=part_of_speech, translations=translations, recordings=recordings, examples=examples)
 
@@ -139,7 +147,7 @@ class HtmlParser(object):
         return dict(text=content.text.strip(), url='{}{}'.format(DIKI_ROOT_URL, url_tag['href']))
 
     def parse_recordings(self, content, css=''):
-        recording_tags = content.select('{}.recordingsAndTranscriptions .hasRecording *[data-audio-url]'.format(css))
+        recording_tags = content.select('{} .hasRecording *[data-audio-url]'.format(css))
         recordings = []
         for recording_tag in recording_tags:
             recordings.append({
@@ -158,7 +166,7 @@ class HtmlParser(object):
                 continue
     
             translation = translation_tags[0].text.strip().strip('()')
-            recordings = self.parse_recordings(example_tag)
+            recordings = self.parse_recordings(example_tag, css='.recordingsAndTranscriptions')
             if not recordings:
                 continue
 
