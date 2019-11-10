@@ -1,7 +1,8 @@
 from lang.dictionary.db.entry import ENTRY_TYPE_NOUN, ENTRY_TYPE_ADVERB, ENTRY_TYPE_ADJECTIVE, ENTRY_TYPE_VERB, \
     ENTRY_TYPE_PRONOUN, ENTRY_TYPE_PREPOSITION, ENTRY_TYPE_CONJUNCTION, ENTRY_TYPE_INTERJECTION, ENTRY_TYPE_IDIOM, \
     ENTRY_TYPE_PHRASAL_VERB, ENTRY_TYPE_PREFIX, ENTRY_TYPE_UNKNOWN, ENTRY_TYPE_SUFFIX
-from lang.dictionary.data import EntryData, RecordingData, TranslationData, TranslationEntryData, ExampleData
+from lang.dictionary.data import EntryData, RecordingData, TranslationData, TranslationEntryData, ExampleData, \
+    HeadwordData
 from .client import HtmlClient
 
 ENTRY_TYPES_MAP = {
@@ -34,36 +35,50 @@ class TranslationService(object):
             return []
 
         entry_language, translation_language = result['dictionary']
-        entries_by_type = {}
-        for entry_data in result['entries']:
-            for meaning_data in entry_data['meanings']:
-                part_of_speech = meaning_data.get('part_of_speech')
+
+        entries_data = []
+        for entry in result['entries']:
+            entry_data = EntryData(
+                language=entry_language,
+                translations=[],
+                headwords=[
+                    HeadwordData(
+                        text=h['text'],
+                        source_url=h['url'],
+                        recordings=[
+                            RecordingData(audio_url=r['url'])
+                            for r in h['recordings']])
+                    for h in entry['headwords']])
+
+            for meaning in entry['meanings']:
+                part_of_speech = meaning.get('part_of_speech')
                 if not part_of_speech:
                     entry_type = ENTRY_TYPE_UNKNOWN
                 else:
                     entry_type = ENTRY_TYPES_MAP.get(part_of_speech)
                     assert entry_type is not None, "Unknown part of speech: {}".format(part_of_speech)
 
-                entry = entries_by_type.setdefault(
-                    (entry_type, entry_data['text']), EntryData(
-                        text=entry_data['text'],
-                        language=entry_language,
-                        type=entry_type,
-                        source_url=entry_data['url'],
-                        translations=[],
-                        recordings=[RecordingData(audio_url=r['url']) for r in entry_data['recordings']]))
-
-                translation = TranslationData(
+                translation_data = TranslationData(
                     language=translation_language,
                     type=entry_type,
-                    entries=[TranslationEntryData(
-                        text=t['text'], source_url=t['url']) for t in meaning_data['translations']],
-                    recordings=[RecordingData(audio_url=r['url']) for r in meaning_data['recordings']],
-                    examples=[ExampleData(
-                        text=e['text'], translation=e['translation'],
-                        recording=RecordingData(audio_url=e['recording']['url']))
-                        for e in meaning_data['examples']])
+                    entries=[
+                        TranslationEntryData(
+                            text=t['text'],
+                            source_url=t['url'])
+                        for t in meaning['translations']],
+                    recordings=[
+                        RecordingData(
+                            audio_url=r['url'])
+                        for r in meaning['recordings']],
+                    examples=[
+                        ExampleData(
+                            text=e['text'],
+                            translation=e['translation'],
+                            recording=RecordingData(audio_url=e['recording']['url']))
+                        for e in meaning['examples']])
 
-                entry.translations.append(translation)
+                entry_data.translations.append(translation_data)
 
-        return list(entries_by_type.values())
+            entries_data.append(entry_data)
+
+        return entries_data

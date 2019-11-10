@@ -8,9 +8,11 @@
         {% for entry in entries %}
         <div>
             <div>
-                <input type="checkbox" name="entry.{{ forloop.counter0 }}.add" value="1" checked>
-                <span>{{ entry.text }}</span>
-                <input type="hidden" name="entry.{{ forloop.counter0 }}.text" value="{{ entry.text }}">
+                {% for headword in entry.headwords %}
+                    <input type="checkbox" name="headword.{{ forloop.parentloop.counter0 }}.{{ forloop.counter0 }}.add" value="1" checked>
+                    <span>{{ headword.text }}</span>
+                    <input type="hidden" name="headword.{{ forloop.parentloop.counter0 }}.{{ forloop.counter0 }}.text" value="{{ headword.text }}">
+                {% endfor %}
             </div>
             <ul>
             {% for translation in entry.translations %}

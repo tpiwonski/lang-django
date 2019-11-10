@@ -18,8 +18,10 @@ COPY . /lang-django
 
 EXPOSE 8000
 
-ENTRYPOINT /usr/bin/env python manage.py migrate && \
-		   /usr/bin/env gunicorn langsite.wsgi:application --bind 0.0.0.0:8000 --log-file - --access-logfile -
+# ENTRYPOINT /usr/bin/env python manage.py migrate && \
+#		   /usr/bin/env gunicorn langsite.wsgi:application --bind 0.0.0.0:8000 --log-file - --access-logfile -
+
+CMD ["/usr/bin/env", "gunicorn", "langsite.wsgi:application", "--bind", "0.0.0.0:8000", "--log-file", "-", "--access-logfile", "-"]
 
 #	/usr/bin/env python manage.py runserver 0.0.0.0:8000 --nothreading --noreload
 #	/usr/bin/env gunicorn langsite.wsgi:application --bind 0.0.0.0:8000 --workers=1 --reload

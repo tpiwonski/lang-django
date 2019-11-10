@@ -30,10 +30,14 @@ class TranslationData(object):
 
 
 @dataclass
-class EntryData(object):
+class HeadwordData:
     text: str
-    language: str
-    type: int
     source_url: str
-    translations: List[TranslationData]
     recordings: List[RecordingData]
+
+
+@dataclass
+class EntryData(object):
+    language: str
+    headwords: List[HeadwordData]
+    translations: List[TranslationData]
