@@ -69,7 +69,7 @@ class HtmlParser(object):
         entity_tags = content.find_all('div', class_='dictionaryEntity')
         entries = []
         for entity_tag in entity_tags:
-            entries.extend(self.parse_entry(entity_tag))
+            entries.append(self.parse_entry(entity_tag))
 
         return entries
 
@@ -77,7 +77,7 @@ class HtmlParser(object):
         entry_tags = content.select('.hws .hw')
         meanings = self.parse_meanings(content)
 
-        entries = []
+        headwords = []
         for entry_tag in entry_tags:
             text = entry_tag.text.strip()
             url_tag = entry_tag.find('a', class_='plainLink', recursive=False)
@@ -91,9 +91,9 @@ class HtmlParser(object):
             if recordings_tag:
                 recordings = self.parse_recordings(recordings_tag)
 
-            entries.append(dict(text=text, url=url, meanings=meanings, recordings=recordings))
+            headwords.append(dict(text=text, url=url, recordings=recordings))
 
-        return entries
+        return dict(headwords=headwords, meanings=meanings)
 
     def parse_meanings(self, content):
         meanings = []

@@ -82,7 +82,7 @@ class EntryManager(models.Manager):
         return self.get_queryset().with_translations().order_by('text').all()
 
     def search_with_text(self, text, language=None):
-        qs = self.get_queryset().with_translations().filter(text__icontains=text) 
+        qs = self.get_queryset().with_translations().filter(Q(text__icontains=text) & ~Q(type=ENTRY_TYPE_SENTENCE))
         if language:
             qs = qs.filter(language=language)
 

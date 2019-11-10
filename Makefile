@@ -1,7 +1,7 @@
 build:
 	docker-compose build
 up:
-	docker-compose up -d
+	docker-compose up
 down:
 	docker-compose down
 stop:
@@ -17,6 +17,6 @@ drop-db:
 create-db:
 	docker-compose exec database createdb -U lang lang
 migrate:
-	docker-compose run --rm backend --entrypoint /usr/bin/env python manage.py migrate
+	docker-compose run --rm backend /usr/bin/env python manage.py migrate
 dev:
 	docker-compose.exe -f docker-compose.dev.yaml up -d
