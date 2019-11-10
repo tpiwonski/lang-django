@@ -64,7 +64,7 @@ class AddEntryTranslationsView(ComponentView):
 
         entries = []
         for entry_no, entry in data.items():
-            if not any([h['add'] for h in entry['headwords'].values()]):
+            if not any([h.get('add') for h in entry['headwords'].values()]):
                 continue
 
             translations = []

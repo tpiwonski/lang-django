@@ -1,4 +1,5 @@
 import itertools
+from operator import attrgetter
 from typing import List
 
 from django.db import transaction
@@ -82,8 +83,9 @@ class AddEntries(object):
 
                     entries.append(entry)
 
-            for i, k in itertools.combinations(headword_synonyms, 2):
-                if not i.has_synonym(k):
-                    i.add_synonym(k)
+            for k, g in itertools.groupby(sorted(headword_synonyms, key=attrgetter('type')), attrgetter('type')):
+                for i, k in itertools.combinations(set(g), 2):
+                    if not i.has_synonym(k):
+                        i.add_synonym(k)
 
         return entries
