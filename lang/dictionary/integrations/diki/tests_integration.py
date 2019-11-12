@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import re
+
 import pytest
 
 from .client import HtmlClient, HtmlParser
@@ -10,5 +12,5 @@ def test_translate():
     # results = client.translate('home')
     # pass
     service = TranslationService()
-    results = service.translate('home')
+    results = service.translate('chilling')
     pass

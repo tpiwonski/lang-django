@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import List
 
-from rest_framework.serializers import Serializer, CharField, ChoiceField, ModelSerializer, SerializerMethodField
+from rest_framework.serializers import Serializer, CharField, ChoiceField, ModelSerializer, SerializerMethodField, ListField
 
 from lang.dictionary.db.entry import LANGUAGES, ENTRY_TYPES
 from lang.dictionary.models import Example, Entry, Recording
@@ -46,6 +46,7 @@ class TranslationExampleOutput(ModelSerializer):
 class EntryTranslationOutput(Serializer):
     entry = TranslationEntryOutput()
     examples = TranslationExampleOutput(many=True)
+    collocations = ListField(str)
 
 
 class SynonymOutput(ModelSerializer):
@@ -70,8 +71,11 @@ class ViewEntryOutput(ModelSerializer):
         return dict(ENTRY_TYPES).get(entry.type)
 
     def get_translations(self, entry):
-        result = [EntryTranslation(t.subject if t.object == entry else t.object, t.examples)
-                  for t in entry.translations]
+        result = [
+            EntryTranslation(
+                entry=t.subject if t.object == entry else t.object,
+                examples=t.examples,
+                collocations=t.collocated_words) for t in entry.translations]
         return EntryTranslationOutput(result, many=True).data
 
 
@@ -87,6 +91,7 @@ class EditEntryOutput(ModelSerializer):
 class EntryTranslation:
     entry: Entry
     examples: List[int]
+    collocations: List[str]
 
 
 class TranslationInput(Serializer):

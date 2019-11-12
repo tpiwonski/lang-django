@@ -1,6 +1,7 @@
 from requests import Session
 from bs4 import BeautifulSoup
 import html
+import re
 
 # dict(
 #     entities=list(
@@ -39,6 +40,7 @@ class HtmlParser(object):
     DICTIONARY_EN_PL = 'angielsko-polski'
     DICTIONARY_PL_EN = 'polsko-angielski'
     ENTRY_NOT_FOUND = 'Nie znaleziono'
+    TRANSLATION_COLLOCATIONS_RX = re.compile(r'^(?P<translation>[^\(]+)(?P<collocations>\([^\(\)]+\)){0,1}(?P<rest>.*){0,1}$', flags=re.IGNORECASE)
 
     def parse_results(self, content):
         content = BeautifulSoup(content, features="html.parser")
@@ -115,10 +117,12 @@ class HtmlParser(object):
         return meanings
 
     def parse_entry_slice(self, content, part_of_speech):
-        translations = self.parse_translations(content)
+        translations, collocations = self.parse_translations(content)
         recordings = self.parse_recordings(content, css='.hw + .recordingsAndTranscriptions')
         examples = self.parse_examples(content)
-        return dict(part_of_speech=part_of_speech, translations=translations, recordings=recordings, examples=examples)
+        return dict(
+            part_of_speech=part_of_speech, translations=translations, recordings=recordings, examples=examples,
+            collocations=collocations)
 
     def parse_part_of_speech(self, content):
         part_of_speech_tag = content.find_previous_sibling('div', class_='partOfSpeechSectionHeader')
@@ -129,22 +133,44 @@ class HtmlParser(object):
         return part_of_speech
 
     def parse_meaning(self, content, part_of_speech):
-        translations = self.parse_translations(content)
+        translations, collocations = self.parse_translations(content)
         recordings = self.parse_recordings(content, css='.hw + .recordingsAndTranscriptions')
         examples = self.parse_examples(content)
-        return dict(part_of_speech=part_of_speech, translations=translations, recordings=recordings, examples=examples)
+        return dict(
+            part_of_speech=part_of_speech, translations=translations, recordings=recordings, examples=examples,
+            collocations=collocations)
 
     def parse_translations(self, content):
         translation_tags = content.find_all('span', class_='hw', recursive=False)
         translations = []
+        collocations = []
         for translation_tag in translation_tags:
-            translations.append(self.parse_translation(translation_tag))
-        
-        return translations
+            translation = self.parse_translation(translation_tag)
+            collocations.extend(translation['collocations'])
+            translations.append(translation)
+
+        collocations = list(set(collocations))
+        # for translation in translations:
+        #     translation['usages'] = list(usages)
+
+        return translations, collocations
 
     def parse_translation(self, content):
         url_tag = content.find('a', class_='plainLink')
-        return dict(text=content.text.strip(), url='{}{}'.format(DIKI_ROOT_URL, url_tag['href']))
+        m = self.TRANSLATION_COLLOCATIONS_RX.match(content.text.strip())
+
+        text = m.group('translation').strip()
+        collocations = m.group('collocations')
+        if collocations:
+            collocations = collocations.strip("()").strip()
+            if collocations.startswith('np.'):
+                collocations = collocations[4:].strip()
+
+            collocations = [u.strip() for u in collocations.split(',')]
+        else:
+            collocations = []
+
+        return dict(text=text, url='{}{}'.format(DIKI_ROOT_URL, url_tag['href']), collocations=collocations)
 
     def parse_recordings(self, content, css=''):
         recording_tags = content.select('{} .hasRecording *[data-audio-url]'.format(css))
