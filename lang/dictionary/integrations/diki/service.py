@@ -75,7 +75,8 @@ class TranslationService(object):
                             text=e['text'],
                             translation=e['translation'],
                             recording=RecordingData(audio_url=e['recording']['url']))
-                        for e in meaning['examples']])
+                        for e in meaning['examples']],
+                    collocations=meaning['collocations'])
 
                 entry_data.translations.append(translation_data)
 

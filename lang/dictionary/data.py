@@ -27,6 +27,7 @@ class TranslationData(object):
     entries: List[TranslationEntryData]
     recordings: List[RecordingData]
     examples: List[ExampleData]
+    collocations: List[str]
 
 
 @dataclass

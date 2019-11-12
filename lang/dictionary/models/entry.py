@@ -20,11 +20,12 @@ class Entry(EntryModel):
     def create(text, language, entry_type, source_url=''):
         return Entry.objects.create(id=uuid.uuid4(), text=text, language=language, type=entry_type, source_url=source_url)
 
-    def add_translation(self, entry):
+    def add_translation(self, entry, collocations=None):
         if self.has_translation(entry):
             raise Exception("Translation already exists")
 
-        return Translation.create(object=self, subject=entry)
+        return Translation.create(
+            object=self, subject=entry, collocations=collocations)
 
     def remove_translation(self, entry):
         Translation.objects.filter(Q(object=self, subject=entry) | Q(object=entry, subject=self)).delete()

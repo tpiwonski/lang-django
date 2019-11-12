@@ -16,6 +16,8 @@ drop-db:
 	docker-compose exec database dropdb -U lang lang
 create-db:
 	docker-compose exec database createdb -U lang lang
+migrations:
+	docker-compose run --rm backend /usr/bin/env python manage.py makemigrations --name $(name)
 migrate:
 	docker-compose run --rm backend /usr/bin/env python manage.py migrate
 dev:

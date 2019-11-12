@@ -13,8 +13,10 @@ class Translation(TranslationModel):
         return "{} - {}".format(self.subject, self.object)
 
     @staticmethod
-    def create(object, subject):
-        return Translation.objects.create(id=uuid.uuid4(), object=object, subject=subject)
+    def create(object, subject, collocations=None):
+        return Translation.objects.create(
+            id=uuid.uuid4(), object=object, subject=subject,
+            collocations=','.join(collocations) if collocations else '')
 
     def add_example(self, example):
         if self.has_example(example):

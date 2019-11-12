@@ -88,7 +88,8 @@ class AddEntryTranslationsView(ComponentView):
                         examples=[ExampleData(
                             text=e['text'], translation=e['translation'],
                             recording=RecordingData(audio_url=e['recording']['audio_url']))
-                                for e in translation_data['examples']])
+                                for e in translation_data['examples']],
+                        collocations=translation_data['collocations'])
 
                     translations.append(translation)
 
