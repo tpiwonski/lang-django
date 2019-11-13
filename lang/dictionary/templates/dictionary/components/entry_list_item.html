@@ -1,15 +1,2 @@
-<div>
-    <div>
-        <a href="{% url 'entry-view' entry.id %}">{{ entry.text }}</a>
-        <a href="{% url 'edit-entry' entry.id %}"><i class="fas fa-edit"></i></a>
-        {% for recording in entry.recordings %}
-            <a href="{{ recording.url }}" target="_blank"><i class="fas fa-volume-up"></i></a>
-        {% endfor %}
-        {% comment %} <a href="{% url 'entry-view' entry.id %}" ic-delete-from="{% url 'entry-view' entry.id %}"><i class="far fa-trash-alt"></i></a> {% endcomment %}
-    </div>
-    <ul>
-    {% for translation in entry.translated_entries %}
-        <li><a href="{% url 'entry-view' translation.id %}">{{ translation.text }}</a></li>
-    {% endfor %}
-    </ul>
-</div>
+{% load view_entry %}
+{% view_entry entry %}
