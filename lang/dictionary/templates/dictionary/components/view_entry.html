@@ -1,22 +1,25 @@
 <div>
-{% if entry %}
     <div>
-        <a href="{% url 'entry-view' entry.id %}">{{ entry.text }}</a>
-        <a href="{% url 'edit-entry' entry.id %}"><i class="fas fa-edit"></i></a>
+        <a href="{% url 'entry-view' entry.id %}"><span class="font-weight-bold">{{ entry.text }}</span></a>
         {% for recording in entry.recordings %}
             <a href="{{ recording.audio_url }}" target="_blank"><i class="fas fa-volume-up"></i></a>
         {% endfor %}
+        <a href="{% url 'edit-entry' entry.id %}"><i class="fas fa-edit"></i></a>
         {% if entry.source_url %}
             <a href="{{ entry.source_url }}" target="_blank"><i class="fas fa-external-link-alt"></i></a>
         {% endif %}
-        {% for synonym in entry.synonyms %}
-            <a href="{% url 'entry-view' synonym.id %}">{{ synonym.text }}</a>
-        {% endfor %}
         {% comment %} <a href="{% url 'entry-view' entry.id %}" ic-delete-from="{% url 'entry-view' entry.id %}"><i class="far fa-trash-alt"></i></a> {% endcomment %}
     </div>
     <div>
-        <span>{{ entry.type_name }}</span>
+        <span class="font-italic">{{ entry.type_name }}</span>
     </div>
+    {% if entry.synonyms %}
+    <div>
+        {% for synonym in entry.synonyms %}
+        <a href="{% url 'entry-view' synonym.id %}">{{ synonym.text }}</a><br>
+        {% endfor %}
+    </div>
+    {% endif %}
     <ul>
     {% for translation in entry.translations %}
         <li>
@@ -24,7 +27,7 @@
             {% if translation.entry.source_url %}
                 <a href="{{ translation.entry.source_url }}" target="_blank"><i class="fas fa-external-link-alt"></i></a>
             {% endif %}
-            {{ translation.usage_notes }}
+            <span>{{ translation.usage_notes }}</span>
             <ul>
             {% for example in translation.examples %}
                 <li>
@@ -50,5 +53,4 @@
         <li><a href="{% url 'entry-view' example.id %}">{{ example.text }}</a></li>
     {% endfor %}
     </ul>
-{% endif %}
 </div>

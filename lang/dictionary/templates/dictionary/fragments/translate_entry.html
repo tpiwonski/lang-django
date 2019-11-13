@@ -10,12 +10,13 @@
         <div class="form-row">
             {% include 'lang/fragments/form_field.html' with field=translate_form.q field_class="col" %}
         </div>
-        <input type="submit" value="Translate">
+        <input type="submit" class="btn btn-primary" value="Translate">
     </form>
     <div id="indicator" class="spinner-border spinner-border-sm" role="status" style="display:none">
         <span class="sr-only">Loading...</span>
     </div>
     {% if entries %}
+        <hr>
         {% include 'dictionary/fragments/translate_entry_list_form.html' with entries=entries %}
     {% endif %}
     <script>

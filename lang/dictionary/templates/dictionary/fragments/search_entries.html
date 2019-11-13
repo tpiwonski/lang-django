@@ -10,12 +10,15 @@
         <div class="form-row">
             {% include 'lang/fragments/form_field.html' with field=search_form.q field_class="col" %}
         </div>
-        <input type="submit" value="Search">
+        <input type="submit" class="btn btn-primary" value="Search">
     </form>
     <div id="indicator" class="spinner-border spinner-border-sm" role="status" style="display:none">
         <span class="sr-only">Loading...</span>
     </div>
+    {% if entries %}
+    <hr>
     {% entry_list entries %}
+    {% endif %}
 </div>
 <script>
 function onBeforePost(evt, elt) {
