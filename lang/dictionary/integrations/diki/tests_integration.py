@@ -12,5 +12,5 @@ def test_translate():
     # results = client.translate('home')
     # pass
     service = TranslationService()
-    results = service.translate('chilling')
+    results = service.translate('succumb')
     pass

@@ -18,6 +18,7 @@ class ExampleData(object):
 class TranslationEntryData(object):
     text: str
     source_url: str
+    usage_notes: str
 
 
 @dataclass
@@ -27,7 +28,6 @@ class TranslationData(object):
     entries: List[TranslationEntryData]
     recordings: List[RecordingData]
     examples: List[ExampleData]
-    collocations: List[str]
 
 
 @dataclass

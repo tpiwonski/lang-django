@@ -24,9 +24,7 @@
             {% if translation.entry.source_url %}
                 <a href="{{ translation.entry.source_url }}" target="_blank"><i class="fas fa-external-link-alt"></i></a>
             {% endif %}
-            {% for collocation in translation.collocations %}
-            {{ collocation }}
-            {% endfor %}
+            {{ translation.usage_notes }}
             <ul>
             {% for example in translation.examples %}
                 <li>

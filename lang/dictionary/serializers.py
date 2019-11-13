@@ -46,7 +46,7 @@ class TranslationExampleOutput(ModelSerializer):
 class EntryTranslationOutput(Serializer):
     entry = TranslationEntryOutput()
     examples = TranslationExampleOutput(many=True)
-    collocations = ListField(str)
+    usage_notes = CharField()
 
 
 class SynonymOutput(ModelSerializer):
@@ -65,7 +65,9 @@ class ViewEntryOutput(ModelSerializer):
 
     class Meta:
         model = Entry
-        fields = ['id', 'text', 'language', 'type', 'type_name', 'source_url', 'translations', 'translated_entries', 'recordings', 'synonyms']
+        fields = [
+            'id', 'text', 'language', 'type', 'type_name', 'source_url', 'translations', 'translated_entries',
+            'recordings', 'synonyms']
 
     def get_type_name(self, entry):
         return dict(ENTRY_TYPES).get(entry.type)
@@ -75,7 +77,7 @@ class ViewEntryOutput(ModelSerializer):
             EntryTranslation(
                 entry=t.subject if t.object == entry else t.object,
                 examples=t.examples,
-                collocations=t.collocated_words) for t in entry.translations]
+                usage_notes=t.usage_notes) for t in entry.translations]
         return EntryTranslationOutput(result, many=True).data
 
 
@@ -91,7 +93,7 @@ class EditEntryOutput(ModelSerializer):
 class EntryTranslation:
     entry: Entry
     examples: List[int]
-    collocations: List[str]
+    usage_notes: str
 
 
 class TranslationInput(Serializer):
