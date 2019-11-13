@@ -44,7 +44,7 @@ class AddEntries(object):
 
                         translation = entry.get_translation(translation_entry)
                         if not translation:
-                            translation = entry.add_translation(translation_entry, translation_data.collocations)
+                            translation = entry.add_translation(translation_entry, translation_entry_data.usage_notes)
 
                         for entry_recording_data in translation_data.recordings:
                             if not translation_entry.has_recording(entry_recording_data.audio_url):

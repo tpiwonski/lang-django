@@ -75,7 +75,9 @@ class AddEntryTranslationsView(ComponentView):
                     if 'add' in translation_entry:
                         translation_entry_data = payload[int(entry_no)]['translations'][int(translation_no)]['entries'][int(translation_entry_no)]
                         translation_entry = TranslationEntryData(
-                            text=translation_entry_data['text'], source_url=translation_entry_data['source_url'])
+                            text=translation_entry_data['text'],
+                            source_url=translation_entry_data['source_url'],
+                            usage_notes=translation_entry_data['usage_notes'])
                         translation_entries.append(translation_entry)
 
                 if translation_entries:
@@ -88,8 +90,7 @@ class AddEntryTranslationsView(ComponentView):
                         examples=[ExampleData(
                             text=e['text'], translation=e['translation'],
                             recording=RecordingData(audio_url=e['recording']['audio_url']))
-                                for e in translation_data['examples']],
-                        collocations=translation_data['collocations'])
+                                for e in translation_data['examples']])
 
                     translations.append(translation)
 

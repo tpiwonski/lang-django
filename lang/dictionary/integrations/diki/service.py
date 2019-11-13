@@ -64,7 +64,8 @@ class TranslationService(object):
                     entries=[
                         TranslationEntryData(
                             text=t['text'],
-                            source_url=t['url'])
+                            source_url=t['url'],
+                            usage_notes=t['notes'])
                         for t in meaning['translations']],
                     recordings=[
                         RecordingData(
@@ -75,8 +76,7 @@ class TranslationService(object):
                             text=e['text'],
                             translation=e['translation'],
                             recording=RecordingData(audio_url=e['recording']['url']))
-                        for e in meaning['examples']],
-                    collocations=meaning['collocations'])
+                        for e in meaning['examples']])
 
                 entry_data.translations.append(translation_data)
 
