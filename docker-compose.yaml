@@ -8,6 +8,7 @@ services:
 #    command: /usr/bin/env gunicorn langsite.wsgi:application --bind 0.0.0.0:8000 --workers=1 --reload
     environment:
       DJANGO_SETTINGS_MODULE: langsite.settings.docker
+      LANG_DB_NAME: ${LANG_DB_NAME}
     expose:
 #    ports:
       - 8000
