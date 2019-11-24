@@ -13,9 +13,9 @@ stop-db:
 dump-db:
 	docker-compose exec database pg_dump -U lang -F p lang
 drop-db:
-	docker-compose exec database dropdb -U lang lang
+	docker-compose exec database dropdb -U lang $(LANG_DB_NAME)
 create-db:
-	docker-compose exec database createdb -U lang lang
+	docker-compose exec database createdb -U lang $(LANG_DB_NAME)
 migrations:
 	docker-compose run --rm backend /usr/bin/env python manage.py makemigrations --name $(name)
 migrate:
